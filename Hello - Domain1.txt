@@ -1,0 +1,449 @@
+Date : 25-02-2024
+
+**** first installed git bash from link - https://git-scm.com/download/ based on OS
+**** follow the aws documentation of service to learn more about service and remember it.
+**** follow aws blog section about new annoucement in service to get align with certification requirement.
+
+
+Domain 1: Data Engineering
+Task Statement 1.1: Create data repositories for ML.
+ Identify data sources (for example, content and location, primary sources
+such as user data).
+ Determine storage mediums (for example, databases, Amazon S3, Amazon
+Elastic File System [Amazon EFS], Amazon Elastic Block Store [Amazon
+EBS]).
+Task Statement 1.2: Identify and implement a data ingestion solution.
+ Identify data job styles and job types (for example, batch load, streaming).
+ Orchestrate data ingestion pipelines (batch-based ML workloads and
+streaming-based ML workloads).
+o Amazon Kinesis
+o Amazon Kinesis Data Firehose
+o Amazon EMR
+o AWS Glue
+o Amazon Managed Service for Apache Flink
+ Schedule jobs.
+Task Statement 1.3: Identify and implement a data transformation solution.
+ Transform data in transit (ETL, AWS Glue, Amazon EMR, AWS Batch).
+ Handle ML-specific data by using MapReduce (for example, Apache Hadoop,
+Apache Spark, Apache Hive). 
+
+
+Data Engineering
+
+- analyse the user requirement and desgin a program to store, transfer, transform, make the structure of data to perform analytics and reporting on them.
+
+
+
+Data Engineering tools 
+
+
+@@@ Data Ingestion Tools  @@@ - to extract various types of raw data(heterogenous data) - collect and store in storage pool
+
+1) Amazon Kinesis
+
+- Configure and transform the data before storing in s3 bucket.
+- support encryption, compression, lambda functions, batching
+- mostly lambda fucntion is used to perform transformation of data before storing.
+
+- collect and process real-time data for ML, No waiting to load all data, start analysis.
+- can be used to create real-time data processing application like
+- security monitoring
+- face detection
+- sharing data between device, ELT - extract, load, transform application
+- application monitorinng
+- app to know about what app and customers are doing right now - realtime
+- IoT device data processing so action can take programatically if sensor exceed from threshold value.
+
+video stream, data stream, firehose, process data stream in realtime sql or apache flink( for data streming and realtime data processing).
+note : apache spark is used for batch processing data. Means all data should be available before start.
+
+Amazon Kinesis data streaming  - serverless service.
+- get the data
+- send to kinesis for processing
+- process by apache spark, apache flink, amazon ec2 or transform by amazon lambda
+- analyse by BI tool 
+- log and event data, real time data, event driven application
+
+Amazon Kinesis Video Streaming - streaming videos
+- get videos from camera by using amazon kinesis video streaming sdk
+- store, encrypt, index video for ML, analytics and real-time palyback
+- amazon reckognition video,sagemaker, mxnet, tensorflow, hls based palyback, media processing can be apply afterward
+- smart home, smart city, industrial automation realted application can be made
+
+Amazon Kinesis Data firehose
+- load the real-time data in datalake like s3 bucket, warehouse and analytic services.
+
+2) Snowball Family
+
+- deliver on-premise data to aws cloud along with all benefit of cloud like security.
+
+3) AWS Storage Gateway
+
+- data backup service on amazon s3, amazon FSx(windows file server), EBS, S3 galcier - for company running machine on-premise with data 
+- by file gateway configuration to storage gateway
+- use NFS - Network file system connection - protocol  - to share file over network.
+- have configuration setting in gateway to intiate the connection.
+- provide all virtual cloud storage features for data - like fast accessing (low-latency)
+
+
+@@@Data Storage Tools@@@ - mainly amazon s3 
+- highly scalable
+- cost effective
+- store data in form of object
+- metadata associated with it - specification of data
+- can replicaet in AZ
+- can set recovery points
+- can store diff types of data
+- raw data or transformed data can be stored
+
+@@@Data Integration Tools@@@ - AWS Glue
+- ETL service - Extract, transform, load
+- All integration and transforming(which is optional - yes/no) process done by it
+- takes time to finish
+- serverless tool
+- in essence of processing the data for further uniform schema transforming is must to quering data
+- so this tool is imp to extract(ingestion tool kind), transform(to uniformm schema), load data. 
+
+
+@@@Data Warehouse Tools@@@  -  Amazon RedShift
+- uniform structured data storage
+- to perform query
+- petabyte data storage
+- parallel processing of data
+
+@@@Data Visulaization Tools@@@ - Amazon Quicksight
+- data analytics
+- chart, data insight reports can be created.
+
+
+
+@@@ S3 @@@
+- simple storage service
+- 5GB standard storage - free
+- encryption enabled - storing and retrival
+- can be stored multiple copies across az in case of distruption of data
+- buckets are region specific
+
+S3 Storage Classes
+
+## S3 standard
+- default class
+- low latency, high availability
+- data stored in at least 3 AZ
+- most expensive among other aws
+- durability 99.9999999 and availability 99.99
+
+## S3 standard IA
+- long live, less frequent used data
+- rapid access required
+- same fatures as standard s3 but on low (storage&retrival)price
+- for backup like disaster recovery, long storage
+
+## S3 Intelligent - tiering
+- low latency, high throughput(availability)
+- automatically move data between twoo access tiers - frequent access and infrequent access - 30days period
+- durability 99.9999999 and availability 99.99
+- small monthly monitoring and auto-tiering fees
+
+ 
+## S3 One-Zone IA
+- Infrequent access data but available for milli second access
+- stored in one AZ only
+- Can be used for secondary backup - not primary backup
+- low latency, high throughput(availability)
+- durability 99.9999999 and availability 99.99
+
+
+## S3 Glacier
+- low latency, high throughput(availability)
+- durability 99.9999999 and availability 99.99
+- retrival time min-hours
+- low cost archival of data
+- min storage period 90 days
+
+## S3 Glacier - deep archive
+- low latency, high throughput(availability)
+- durability 99.9999999 and availability 99.99
+- retrival time min-hours
+- lowest cost archival of data
+- min storage period 180 days
+- health and finance system where data stored for 5-10 years
+
+
+## S3 Outposts
+- on-premise outpost(compute&storage) environment
+- 48tb or 96tb storage capacity
+- 100 buckets on each outpost
+- keeping data near premise
+
+
+# s3 lifecycle policy vs s3 intelligent teiring
+
+both are used for cost otimization and improve data access
+
+intelligent => for unpredictable access pattern
+life cycle => predicted access pattern
+
+intelligent store object in 3 tiers
+one for => frequent access
+next for => less frequent access - lower cost
+last for => rare data access - very lowest cost
+
+
+=> so as per lifecycle policy all the object under the policy will be moved from one-to-another storage class
+=> while in intelligent teiring each-n-every object will be checked and if fall under intelligent tiering and exeed the specified limit of not accessed limit than will be moved to particular tier - or storage class.
+
+bucket versioning = > multiple variant of object will be kept in same bucket
+
+AWS Kinesis : by this service we can gather, process and analyse(ingestion - 3 process) real-time video and data stream in real-time environment. No need to wait for whole data loading jsut start analysing and generate insight quickly
+
+four services
+1. video stream
+=> for video streaming from aws connected devices,
+=> encrypt, store and index videos in stream
+=> by api call we can access them
+=> scaling up/down as per need for video steram
+=> can be used to create real-time application related to video from camera
+=> these videos can be used for real-time playback, machine learning and analytics purpose.
+
+2. data stream
+=> extract and process huge stream of data in real-time.
+=> capture raw data and send to data stream
+=> store data for processing
+=> processing can be aws lambda, ec2 instance code, amazon kinesis data analytics, apache spark on EMR
+=> after processing data will be ready for analytics, BI tools
+
+3. data firehose
+=> ETL - Extract, Transform, Load service 
+=> load(deliver) data to data lake like s3, data source or analytics
+=> configure data firehose and it will be sent to your intended storage or processing tool
+=> no explicit code required.
+
+4. data analytics
+=> latest ML feature to detect hot-spot in real-time streming data
+=> by using apache flink we can process and analyse RT streaming data
+=> we can write SQL query to extract meaningful information from it.
+=> perform Unsupervised algo for data analysis.
+=> data from and to from same kinesis data stream, s3, amazon MSK(Managed streaming for apache kafka), other processing tool.
+
+Amazon Kafka
+=> built real-time data pipeline application and real-time data streaming application
+=> data pipeline app -> for moving data from one system to another
+=> data streaming app -> consume the stream of data
+
+amazon Spark
+=> for optimizing batch processing
+
+amazon Flink
+=> for optimizing real-time processing
+
+Difference between Kinesis data stream vs amazon SQS
+
+kinesis data stream => realtime data processing and analytics, read, replay real-time data, multiple app can read from same kinesis stream. its manual scaling, ordered within shard.
+
+amazon SQS => scalable messge queue from storing msg while they are traveling between application, support standard and first-in-first-out queue.
+
+
+Shard - term for kinesis stream
+
+1 shard
+
+read capability 
+- (5 transaction, 2 mb ) per second
+
+write capability
+- (1000 records, 1 mb ) per second
+
+
+Amazon Data Firehose(Formerly Kinesis data firehose)
+=> Data delivery system
+=> in firehose we can set lambda func to transform the data in required formate or sanetize it(removing sensitive info from it). 
+=> auto scale for volumn of data
+
+Managed Apache Flink(Formerly Kinesis Data Analytics)
+=> opensource engine for processing stream and batched data
+=> to Build -  event driven app, data pipeline app and data analytics app
+
+EC2 - virtual server in cloud
+=> AMI - amazon Machine Image - template shows the software configuration for - OS, Application server, other Application - required for EC2 instance to launch
+
+
+AWS Glue
+=> serverless data integration service
+=> to discover, prepare, move, integrate data from multiple source
+=> you can connet 70 diff data source and integrate it in one
+=> discover & organize data
+=> transform, prepare and clean data
+=> build n monitor data pipelines
+
+# discover & organize data
+- it can search from multiple data source
+- glue crawler create metadata for any kind of data and store that to aws gluw data catalog
+- validate and control of usage of your database and table
+- on premise and aws data source can be connected by glue to create  data lake 
+
+# Transform prepare and clean data for analysis
+- ETL - extract, load, transform by drag-drop feature provided by glue(automatic ETL code generate)
+- envoke ETL pipeline by schedule job based on event
+- clean and transform data in transit
+- machine learning feature to clean and prepare data for ML process
+- ETL job notebook provide and edit, debug and test ETL job with interactive session
+
+# Build and Monitor data pipelines
+- scale resources based on workload
+- crawler and glue job based on trigger
+- run glue job and monitor it with apache spark ui, glue job run insight, cloudtrail
+- define work flow of ETL n integration for job crawler and trigger, job
+
+aws Glue
+-> can integrate with snowflake data warehouse
+-> aws data lake can itegrate with glue
+-> glue can integrate with athena
+-> ETL code can be used in github for glue
+-> you can search and query catalog data by athena, redshift, EMR
+
+
+AWS GLue data catalog
+- one AWS GDC per region
+- metadata store
+- table def, job def and other information for glue environment
+
+Classifier
+- glue provide classifier for json, csv, avro, xml etc
+- by java db connectivity provide classifier for relational db system
+- write your own classifeir by grok pattern or raw tag in xml doc
+
+
+Connection
+- data catalog object has properties which are required to connect to data store
+
+
+Crawler
+- a program
+- connect to data store
+- go through classifiers
+- determine schema
+- create metadata table in aws glue data catalog
+
+Dynamic Frame
+- table that support nested data like structure and array
+- each record is self decribing, like semi-structure data
+- apache spark frame and data frame both can be used in glue for ETL process
+
+Job
+- business logic required to perform ETL
+- having data source, data target and transform script
+- job can be scheduled or trigger by event
+
+Notebook Server
+- to run pyspark statement
+- for ETL programming
+
+worker
+- in aws glue pay for only time etl job will run
+- hourly charge for data processing units for etl job
+- three worker type for this configuration of etl job run and charge 
+
+ETL Engine
+- provide all library and editor to write code for etl jobcript
+
+ETL Job Scheduling and orchestring
+- on schedule
+- job can trigger sequentially from inside glue or by lambda function'
+- job can not handle streaming data(real-time ongoin data)
+
+Pricing
+- monthly charge - store/access metadata in data catalog
+- development charge - per second
+- per second charge - for etl job and crawler execution
+
+AWS Glue Crawler
+=> to get to know the metadata propery of data we can use glue over some data which is in any form. 
+=> crawler extract good amount of data propery and store it in glue catalog
+
+AWS Glue DataBrew
+=> visual data preparation tool 
+=> for cleansing and normalizing data without writing code
+=> 80% faster
+
+AWS Athena
+=> Query service to analyse data from s3 bucket by Standard query
+=> serverless
+=> pay for query only, cost effective
+=> scale automatically - handle large data
+=> run query in parallel so results are fast
+=> flexibility - can handle diff open source file formate and can attach to diff db engine
+=> no cluster setup required
+=> min 10MB price per inquiry
+
+Amazon Redshift
+=> AR - aws data warehouse service
+=> AR - Normal SQL and multipart SQL provided
+=> data aggregation from multiple sources - imp
+
+Amazon Elastic Map Reduced - Amazon EMR
+=> Apache Hadoop, Apache Spark, Presto SQL work with EMR
+=> Huge dataset, cluster setup, custom code
+=> for ML, Datawarehouse, Financial analysis
+
+Microsoft SQL Server
+=> realtional database management system
+=> for e-commerce, datawarehouse, analysis
+=> athena and MSS is same category
+
+# By using apache hadoop we can create db and table with athena query from data used from s3 bucket(object form data)
+
+AWS Batch
+=> for running batch computing job on aws
+=> dynamically provide computing resource like cpu, memory optimized computing resource
+=> by schedule execute batch by EC2 spot instance, Fargate(serverless compute engine) or Fargate spot
+=> AWS Batch with Fargate
+ - same cpu and memory for each batch
+ - totally serverless
+ - no need to wait to launch ec2 instance
+ - no wastage resource
+=> job will be stored in queue until job resoure are available(priority)
+=> support GPU scheduling, and many workflow engine to create batch job pipelines
+=> monitoring and logging on aws
+=> support high performance computing workload - involve GPU(ML - large scale computing app)
+=> no cost for batch, cost will be for EC2 instance, Fatgate, aws lambda for stor and run app
+=> Reserved Instance saving plan can be used for cost optimization
+
+AWS Step Function(visual workflow service)
+=> serverless orchestration for any application(ML pipelines, microservice, webapp)
+=> by visual workflow co-ordinate component of any app
+=> two types
+1. standard workflow
+ - exactly execute once(each step execute only once) & can run upto 1 year
+ - for long running workflow
+ - provide visual history of process and debugging
+2 express workflow
+ - for event-based workflow
+ - for streaming data processing and IoT data ingestion
+ - run upto 5 mins
+ - each step can run more than one
+
+			Standard				Express
+
+execution rate  	2000/sec				1 lac/sec
+state transition rate	4000 					unlimited			
+price			by state transition			no n duration of execution
+execution hist & debug  shows inbuilt				amazon cloudwatch in log
+
+both support all service and integration pattern
+
+- write less code and by visually mange logic and components of app
+
+@use cases
+
+- func orchestra, branching, try/retry/catch(error handling)
+- parallel processing :convert one video file into five diff resolution for diff device for view by lambda fun(parallel state)
+- dynamic parallelism : customer shopping all items handles and packed for delivery (map state)
+- state transition for each step of workflow(price based on state transition)
+- for long running multiple ETL jobs 
+- micro service can be created
+- to do recurring task automatically like - infrastructure selection, data synchronization, patch management
+- automatic scale, retry the failed task, handle timeout
+- connect multiple lambda func and create serverless app or microservice wich handle timeout, retry, error, parallel processing, no code needed
+- orchestra the data and service running on EC2 instance, container, on-premise server
+
