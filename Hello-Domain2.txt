@@ -1,0 +1,509 @@
+Date: 05/03/2024
+
+
+Exploratory Data Analysis
+- critical process of initial data investigation
+   discover pattern, outliers
+   test hypnosis
+   check assumption with summary
+   statical and graphical representation
+
+#importance
+- to analyse the data
+- check data set results are valid and appropriate for business goal
+- identify error in dataset
+- understand dataset
+- find outliers
+- understand ds variables and relationship among them
+- at last on all these decision we can identify model to apply on the data on.
+
+
+Data Analysis Logic
+
+1. get the data and if predictation value is price or int/float value
+	- check distribution of value
+	- get sns plot with bin setting
+	- if gettting long tail on back in plot
+	- you have to use log function of result variable
+
+logridhm logic
+	 log 0  =  minus infinity
+	 log 1  =  0
+
+	log_price = np.log1p()
+	log1p will return natural logrithm of 1 + (input array val) = log(1+x)
+
+	so here use of log1p function because - resultant value not will be below 0.
+
+normal distribution of target value will be good for ML - Bell Shaped curve - get this curve of target value by using hist plot
+
+
+2. Missing Values
+
+- check df.info() - to get overall idea about missing values - by no of values specified in it
+- if numeric value : median(more robust to outliers), mean values
+  if categorical value : Most occurance value
+
+type of data
+qualitative data : string, 
+quntitative data : numeric, math func can be applied(discrete{can be counted not measured or divided:children in family}  and continuous{floting point: salary})
+
+
+# statical analysis
+- collect, analyse, discover the patterns in data
+- data => graph (for analysing and discovering pattern, trends in data - get insight in data)
+
+# types of analysis
+1. Descriptive Analysis : Summarization by graph and tables
+2. Inferential Analysis : 
+3. Predictive Analysis: Analyse the past trend and predict the future event
+4. Prescriptive Analysis
+5. EDA
+6. Casual Analysis
+
+Steps to perform Statical Analysis
+
+1. collect the data
+2. understand relationship between data
+3. create model
+4. validate model
+5. generate prediction
+	
+
+Methods to perform statical analysis
+
+- mean (average value of column go get to know which row is near to mean)
+- standard deviation (how the all raw values spread around the mean value - generalization of new data)
+- regression (cause and effect relationship between input val/output val)
+- Hypothesis Testing(to check - Our assumption of data is valid or not - two type 1. null Hpt, 2. alternative Hpt)
+- Sampling (choose the sample from dataset to perform analysis)
+
+
+Descriptive Staticstics 
+
+- generate the summary of dataset
+
+1. Distribution(Frequency Distribution)
+how all values are distributed 
+
+2. Measure of Central Tendency
+ - mean(average value)
+ - median(middle value)
+ - mode(most frequently occuring val)
+
+3. Measure of variability
+ - Range (Diff between Highest and lowest value)
+ - Standard Deviation (how values are being varied from mean value)
+ - variation (square of standard deviation)
+
+Univariate - analysis of one variable - 
+Bivariate -  analysis of two variable
+Multi variate -  analysis of more than one variable
+
+Outlier
+- in dataset the value of some data point is quite different than other points in dataset
+
+to find
+
+- box plot
+- graphical methods - bar chart, histogram chart
+- circle dots on box plot appear than they are outliers
+
+
+
+On different types of data perform analysis
+
+1. reading and mergind data into one dataframe
+- concat, merge, append, join many function for merging
+
+2. remove duplicates from dataframe
+raw_data.duplicated() 
+raw_data[raw_data.duplicated()] # masking duplicate-gives you duplicate columns extra one same column will be there in raw_data along this
+raw_data.drop_duplicates(inplace=True) # drop duplicate entry
+
+3. remove outliers from dataframe
+
+How to find out outliers raws from data set
+
+- first check by box plot any outliers are there in any columns
+- get 0.25, median, 0.75 quantile on data set column
+q1 = raw_data['ShippingTime'].quantile(0.25)
+q2 = raw_data['ShippingTime'].median()
+q3 = raw_data['ShippingTime'].quantile(0.75)
+iqr = q3-q1
+
+minimum_box_val = q1 - 1.5*iqr
+maximum_box_val = q3 + 1.5*iqr
+
+cond1 = raw_data['ShippingTime'] < minimum_box_val
+cond2 = raw_data['ShippingTime'] > maximum_box_val
+
+outliers = raw_data[cond1 | cond2]
+
+raw_data.drop(index=outliers.index, inplace=True) # drop outliers
+
+4. Handle Missing values
+
+# to check missing values are there
+!pip install missingno
+
+import missingno as mn
+mn.matrix(raw_data)
+plt.show()
+
+white lines will show missing values
+
+raw_data.isnull().sum()
+
+1. imputation : fill missing value
+
+raw_data.info()
+
+string/categorical => most occurance value
+numerical => median - robust to outliers, mean
+
+raw_data['ProductType'] = raw_data['ProductType'].fillna(raw_data['ProductType'].mode()[0])
+raw_data['Rating'] = raw_data['Rating'].fillna(raw_data['Rating'].mode()[0])
+raw_data['Gender'] = raw_data['Gender'].fillna('Unspecified')
+raw_data['PaymentMode'] = raw_data['PaymentMode'].fillna(raw_data['PaymentMode'].mode()[0])
+raw_data['ShippingMode'] = raw_data['ShippingMode'].fillna(raw_data['ShippingMode'].mode()[0])
+raw_data['ShippingTime'] = raw_data['ShippingTime'].fillna(raw_data['ShippingTime'].median())
+
+5. Fixing errors/typos 
+
+def rating(x):
+    if x=='1 start':
+        return "1 star"
+    elif x=='2star':
+        return "2 star"
+    else:
+        return x
+raw_data['Rating'] = raw_data['Rating'].apply(rating)
+raw_data['Rating'].unique()
+
+6. Data Transformation
+
+raw_data['Date'] = pd.to_datetime(raw_data['Date'], dayfirst=True)
+
+raw_data['Price'].head()
+
+price conversation
+
+1. create currency decs column => raw_data['currency_description'] = raw_data['Price'].apply(get_currency)
+2. convert price value in float formate by replacing , and $ signs, fill null value with 0, change astype to float
+	raw_data['Price'] = raw_data['Price'].str.replace('$',"")
+	raw_data['Price'] = raw_data['Price'].str.replace(',',"")
+	raw_data['Price'] = raw_data['Price'].fillna('0')
+	raw_data['Price'] = raw_data['Price'].astype('float')
+3. define currency conversion array
+cur = {
+    'American Dollar':82.85,
+    'British Pound':105.42,
+    'Euro':90.12
+}
+4. create new array for new converted currncy column
+	new_price_array = []
+
+	for i in range(len(raw_data)):
+    		if raw_data['currency_description'].iloc[i] in cur.keys():
+    	    		new_price_array.append(raw_data['Price'].iloc[i]*(cur[raw_data['currency_description'].iloc[i]]))
+    		else:
+       	 		new_price_array.append(raw_data['Price'].iloc[i])
+                    
+	new_price_array 
+5. add the array as new column and create boxplot on that column to check outliers
+	sns.boxplot(data=raw_data, x='Price_INR')
+	plt.show()
+6. calculate outliers as specified in 1 step and drop if any
+	raw_data.drop(index=outliers.index, inplace=True)
+
+
+7. Encoding the data
+
+type of data according to encode it
+
+1. ordinal data: kind of order can apply like rating
+
+	LabelEncoder for ordinal data only
+
+	from skelarn.preprocessing import LabelEncoder
+	le = LabelEncoder()
+	le.fit(raw_data['Rating'])
+	raw_data['rating_encode'] = le.transform(raw_data['Rating'])
+
+2. categorical data or nominial data: collection of data only like gender, color
+
+	# in padas by get_dummies function we can apply one hot encoding on column directly
+	raw_data = pd.get_dummies(raw_data, columns=['ShippingMode'])
+
+	# or by below code
+	from sklearn.preprocessing import OneHotEncoder
+	ohe = OneHotEncoder()
+	ohe.fit(raw_data['ShippingMode'].values.reshape(-1,1))
+	ohe_tr = ohe.transform(raw_data['ShippingMode'].values.reshape(-1,1))
+	ohe_tr.todense() #Return a dense representation of this sparse array/matrix.
+	df_sm = pd.DataFrame(ohe_tr.todense(), columns=ohe.categories_)
+	df_sm
+
+8. Scaling the Numerical values
+
+input values should be in same scale before applying to ML
+
+two types of scaling technique
+
+1. Standard Scaler
+- transform value in z score - means column will have 0 mean value and dispertion of all values to 1 = standa deviation = 1
+- z score = StandardScaler
+
+from sklearn.preprocessing import StandardScaler
+ss= StandardScaler()
+ss.fit(raw_data['Price_INR'].values.reshape(-1,1))
+raw_data['Price_Scaled'] = ss.transform(raw_data['Price_INR'].values.reshape(-1,1))
+raw_data[['Price_INR','Price_Scaled']].describe()
+
+2. Normalization - min-max scaler
+- some sort of minimum and maximum values defined 
+- all values converted according to those values
+
+from sklearn.preprocessing import MinMaxScaler
+mns = MinMaxScaler(feature_range=(1,2))
+mns.fit(raw_data['Price_INR'].values.reshape(-1,1))
+raw_data['Price_MinMax_Scaled'] = mns.transform(raw_data['Price_INR'].values.reshape(-1,1))
+raw_data[['Price_INR','Price_Scaled','Price_MinMax_Scaled']].describe()
+
+
+9. Visualization Methods for EDA
+
+for numerical value like age we can use => histplot
+for categorical value like yes/no kind we can use => countplot
+
+sns.histplot(data=df, x='Age') # for numeric value
+plt.show()
+
+sns.set_style('whitegrid') # for categorical value
+sns.countplot(data=df, x='Attrition', color='green')
+
+to check % apply normalize attribute to True on value_counts method
+df['Attrition'].value_counts(normalize=True)
+
+
+# bivariate analysis on two columns - both are categorical
+sns.countplot(data=df, x='Department', hue='Attrition')
+plt.show()
+
+# when 1 value numeric and other is categorical - use barplot
+sns.barplot(data=df, x='Attrition', y='MonthlyIncome')
+plt.show()
+
+# when both value are numrical
+sns.scatterplot(data=df, x='MonthlyIncome', y='YearsAtCompany', hue='Attrition')
+plt.show()
+
+# other type when one is categorical and one is numerical
+sns.swarmplot(data=df, y='JobRole', x='MonthlyIncome', hue='Attrition')
+plt.show()
+
+# boxplot for categorical and numerical value
+ns.boxplot(data=df, x='Department', y='MonthlyIncome')
+plt.show()
+
+# univariate analysis for two numerical values - jointplot
+sns.jointplot(data=df, x='MonthlyIncome', y='Age', kind='scatter')
+plt.show()
+
+
+10. Imbalanced Data
+
+9900 - not fardulant
+100 - fradulant
+
+this dataset is imbalanced dataset
+
+under sampling
+- remove random records from majority class
+
+over sampling
+- duplicate random records from minority class
+
+data_0 = data[data['Class']==0]
+data_1 = data[data['Class']==1]
+
+# random undersampling
+data_0_undersample = data_0.sample(len(data_1))
+data_undersample = pd.concat([data_0_undersample, data_1], axis=0)
+data_undersample['Class'].value_counts()
+
+# random oversampling
+data_1_oversampling = data_1.sample(len(data_0), replace=True)
+data_oversample = pd.concat([data_1_oversampling, data_0], axis=0)
+data_oversample['Class'].value_counts()
+
+
+#imblearn library to sample imbalance dataset
+random under sampler - pick random samples from classes
+
+!pip install imbalanced-learn
+import imblearn
+
+from  imblearn.under_sampling import RandomUnderSampler
+rus = RandomUnderSampler(random_state=40, replacement=True)
+rus.fit(data.drop(columns='Class'), data['Class'])
+X,y = rus.fit_resample(data.drop(columns='Class'), data['Class'])
+y.value_counts()
+
+from imblearn.over_sampling import RandomOverSampler
+ros = RandomOverSampler(random_state=40)
+ros.fit(data.drop(columns='Class'), data['Class'])
+X, y = ros.fit_resample(data.drop(columns='Class'), data['Class'])
+y.value_counts()
+
+
+#SMOTE - synthetic minority oversampling technique - create synthetic data from minority class by k-nearest neighbour class
+
+from imblearn.over_sampling import SMOTE
+smt = SMOTE()
+X,y = smt.fit_resample(data.drop(columns='Class'),data['Class'])
+X.shape
+y.value_counts()
+
+#NearMiss - undersamping technique
+
+from imblearn.under_sampling import NearMiss
+nm = NearMiss()
+X,y = nm.fit_resample(data.drop(columns='Class'), data['Class'])
+X.shape
+y.value_counts()
+
+
+11. Dimentionality Reduction - PCA - Principal Component Analysis
+
+Dimentionality reduction technique of reducing no of features
+- removing unnecessory columns'
+- taking care missing values
+- removing duplicate columns
+
+
+compress dataset in lower dimention space while mainting the most relevent information in it.
+
+two main use - 
+
+feature extraction
+dimentionality reduction
+
+other use -
+EDA, denoise the data - financial, analysis of gnom data in biotechnology field
+
+- helps us to identify patterns in dataset
+- variance in co-relation between features
+
+PCA is highly sensitive to scale of data
+- so first apply scaling technique on data and then identify PCA
+
+X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.3, random_state=0, stratify=y)
+
+ss = StandardScaler()
+X_train_std = ss.fit_transform(X_train)
+X_test_std = ss.transform(X_test)
+
+# use sklearn library PCA Class for applying the same
+# reducing no of features from 13 to 2
+# Principal component will be created and used to reduce no of features
+# NO of principal components are used based on the that features will get deducted
+from sklearn.decomposition import PCA
+pca = PCA(n_components=2)
+X_train_pca = pca.fit_transform(X_train_std)
+X_train_pca
+
+# get to know how many no of features are used to get how many variance in data
+# initialize pcs without n_components
+# call np.cumsum(pca.explained_variance_ratio_)
+pca = PCA()
+X_train_pca = pca.fit_transform(X_train_std)
+np.cumsum(pca.explained_variance_ratio_)
+
+# get all components
+pca.components_
+
+12. Dimensionality Reduction by LDA - Linear Discriminate Analysis
+
+for supervised learning - so use both input and output variable to implement it.
+
+ensure that classes of dataset remains seperate even though dimensions will be reduced
+
+
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+lda = LinearDiscriminantAnalysis()
+X_lda = lda.fit_transform(X_train_std, y_train)
+
+lda.explained_variance_ratio_ # convert dimention in to 2 features
+
+import matplotlib.pyplot as plt
+plt.xlabel('LDA 1')
+plt.ylabel('LDA 2')
+plt.scatter(X_lda[:,0], X_lda[:,1], c=y_train, alpha=0.7)
+
+
+Amazon EMR
+- Data Processing, analysis and machine learning  Framework 
+- cloud big data platform
+- can use opensources like apache spark, apache hive and presto
+- per second price - with one minute minimum
+- simplify building  and operating big data environment and application
+- easy cluster provisioning(infrastructure, cluster configuration, tunning) - in minutes
+- managed sacaling(in/out) for resources for business need - liike compute resources, 
+- IDE - integrated Development Environment for data scientist and engineers for debug, visulize and analyse data science app in any lang
+- high availability with multimaster support so in case of failure host will be taken care
+- reconfiguration on running cluster - no need to restart cluster
+- Elasticity - scale up/down of instances as per your process need. Add/remove running cluster. Resize the running cluster.
+- can have EC2 spot integration and s3 integration, aws glue data catalog integration
+- Amazon EMR can use all kind of database service like S3, Hadoop Distribution File System, DynamoDB, Redshift, Glacier, Amazon Relational Database Service
+- From S3 if you use in EMR than multiple cluster can use that same database from S3
+- By default EMR used with amazon ec2 instance
+- with aws outpost EMR can work too
+- can work with VPN provide full control on system
+- can work with IAM, can use EMR security configuration, Kubernetes authentication for access and encryption
+- custom java program can be created and run on hadoop and store to s3
+
+use cases 
+
+=> Perform big data analytics : find pattern, corelation, market trends, customer patterns etc
+=> extract data from any source, process it at any scale- big scale data pipelines
+=> process real-time data streams
+=> analyse data using Apache spark, MLlib, MxNet, Tensorflow
+=> connect to sagemaker for model-training, analysis and reporting
+
+
+Apache Spark
+- fast data processing workload on large dataset
+- realtime data processing and insights
+- example : read live tweets and perform sentiment analysis on them
+
+Apache Flink
+- realtime streaming dataflow engine
+- can be used for streaming and batch processing data processing
+
+Tensorflow
+- ML library
+- run multiple models and algorithm for ML problems 
+- ML MOdels and deeplearning models
+
+Apache Hudi
+- Data management framework
+- for data processing and pipeline development
+
+Apache Hive
+- open source data warehouse and analytics package run on hadoop
+
+Presto
+- Opensource SQL Query Engine
+- can process data from S3 and Hadoop Distributed File System
+
+APache Phoneix 
+- SQL with ACID data property - automicity, consitency, Isolation, Durability
+
+Apache Hbase
+- non relational database system likewise capability of big data used for hadoop. 
+
+Apache MXnet
+- deep learning neural network model can develop, train and deploy by using GPU on EMR
+
