@@ -201,8 +201,8 @@ Practical for logistic regression
 
 Confusion Metrics = TP, FP, FN, TN
 Accuracy => No of Correct prediction / Total no of prediction = (TP + TN) / (TP+TN+FP+FN)
-Precision => TP / (TP+FP)
-REcall = TP / (TP+FN)
+Precision => TP / (TP+FP)    <= TRUE PREDICTED POSITIVE/ TOTAL PREDICTED POSITIVE
+REcall = TP / (TP+FN)        <= TRUE PREDICTED POSITIVE / ACTUAL POSITIVE
 
 F1 Score =>  harmonic mean of Precision and Recall
 	 => 2 * (Precision*Recall)/(Precision+Recall)
