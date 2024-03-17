@@ -1,0 +1,1137 @@
+Date: 09/03/2024
+
+Machine Learning
+
+- Give desired input and output set to model
+- model will learn the pattern from those data set - with the help of features extracted from those data
+- create a trained model outof it
+- measure accuracy of model - by test data
+- feed it with real data and get predictions
+
+
+Types of Machine Learning
+1. Supervised Learning : data have input and output
+2. Un supervised Learning : Only inputs - machine has to learn the common patterns in data and check if data fall into particular group
+3. Reinforcement Learning : machine will learn based on past experience, based on action taken by it will get reward or penalty.
+
+@@@@@@ Supervised Machine Learning @@@@@@
+
+Linear Regression
+
+- identify  : 
+  if input and output both exist
+  if output is continuouse value(numeric in nature)
+  linear regression problem
+
+can be solved by statical models too - whole new theory 
+
+- By using Scikit learn library
+
+Regression logic -  for one feature 
+ Y^ = a+bx
+
+a = y-intercept
+b = slope
+x = feature
+
+
+Regression logic - for more features
+Y^ = θ0 + θ1x1 + θ2x2 + θ3x3 + θ4x4 + θ5x5 + .... +  θnxn
+
+ θ1, θ2,... θn = co-efficient of regression algorithm
+ θ0 = y-intercept
+ x1, x2... xn = features
+
+
+these equations are used when we try to fit the data into algorithm - trainig job 
+
+output - co-efficient and intercept - crux between the x and y(the pattern found by these two)
+
+For evalution of linear regression model
+- Mean Absolute Error  = mean(absolute difference between true value and predicted value) = mean = average
+- Mean Squared Error = mean(square of (true value - predicted value) 
+- Root Mean Squared Error = sqrt(mean(square of (true value - predicted value)) = square root 
+- R square :  how much variance can be explained by given features - percentage of output can be explained by input features
+  R square = 1 means - 100% variability can be explained by these features with model
+  predicted data point fall into regression line then R square will be 1.
+
+Loss Function - squared error loss - (y - y^) ^ 2)
+Loss function's Value is used to update values of θ0, θ1, θ2,... θn so that the loss func value will be mininum.
+
+In some cases we can have high loss values even if θ0, θ1, θ2,... θn values are good, there we can apply regularization
+
+
+
+### Regularization
+
+
+3 TYpes of Regularization
+
+1. Lasso Regularization(L1 Regularization) - we will add constant value as penalty terms to the loss function
+ - this constant will tends to make coefficient to absolute 0
+ - add the absolute value of magnitude of co-efficient as penalty term to loss function
+
+Loss Function = Squared Error Loss = (y - y^) ^ 2
+y^ = θ0 + θ1x1 + θ2x2 + θ3x3 + θ4x4 + θ5x5 + .... +  θnxn
+
+add one constant say λ, so
+
+         loss function + absolute value of magnitude of co-efficient 
+lasso = ((y - y^) ^ 2) + (λ * (θ1+θ2+...+θn))                              <= so we can get minimum lasso by decrease θ terms to absolute 0
+
+here λ can be any say example 0 or 1 or 2 any... 
+here x1, x2,x3... that we can not change but  θ1, θ2,... θn can be changed
+this change will reflect on (y-y^)^2 too so loss will be decrease
+algorithm will work here
+
+
+2. Ridge Regression(L2 Regularization) - 
+- add squared magnitude of co-efficient as a penalty term for loss function
+- never set co-efficients value to absolute zero as here squared magnitude present 
+
+        loss function + (absolute value of magnitude of co-efficient)^2 
+lasso = ((y - y^) ^ 2) + (λ * (θ1+θ2+...+θn)^2)                   <= so we can get minimum lasso by decrease θ terms but not set to abs(0)
+
+
+3. ElasticNet Regularization
+- L1 + L2 regularization
+- check how much L1 and how much L2 we can apply for this regulatition to decrease loss
+- alpha and l1_ratio are parameter for it
+
+
+from sklearn.linear_model import Lasso, Ridge, ElasticNet
+ls = Lasso(alpha=1)
+ls.fit(X_train, y_train)
+y_ls_predict = ls.predict(X_test)
+
+print(r2_score(y_test, y_ls_predict))
+same implementation for all
+
+
+### Assumptions
+
+1. linear relationship between feature and target
+- to check linearilty between that two use sns.pairplot
+- corelation of co-efficients between variables =>   corr = df.corr()
+
+2. Mean residuals = 0
+- residual = (y_test-y_test_predict)
+- np.mean(residual)
+- mostly you will get this closure to 0
+
+3. Normal Distribution of error terms
+- sns.displot(residual) or sns.histplot(residual) or sns.distplot(residual) 
+- this should be in normal distribution shape - like bell shape curve - gradient discent
+
+4. Multi-collinearility : high co-relation between features itself
+- if MC issue in dataset one feature value will increase other dependent feature value will be increased too
+- so target value will be increased too, but model can not find out because of which feature the value is increased
+- so prediction capability of model will be not as much efficient. So MC is not good for model
+- to check we need to find Variance Inflation Factor
+- VIF score
+
+# calculate vif score for given dataset 
+
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+
+def calc_vif(X):
+
+    # Calculating VIF
+    vif = pd.DataFrame()
+    vif["variables"] = X.columns
+    vif["VIF"] = [variance_inflation_factor(X.values, i) for i in range(X.shape[1])]
+
+    return(vif)
+
+if VIF score > 4 multi co-linearity in dataset, if it is there drop that column(feature) and evaluate model again
+if VIF score < 4 least multi co-linearity in dataset
+
+
+@@@@ Logistic Regression @@@@
+
+- When we have to predict binary value y
+- helps to decsribe relationship between x(independent) and (dependent)y variables
+- function => 1 / (1+e^(-z))
+- z = θ0 + θ1x1 + θ2x2 + θ3x3 + θ4x4 + θ5x5 + .... +  θnxn
+- all value of y will be 0 to 1 -> means between 0 and 1
+- to find best values of θ - technique is used is called gradient discent
+- key assumptions :
+	y -> 0/1
+	X & y 
+	no multico-linearity
+	independent variables are linearly related to log odds
+ 
+
+diff linear regression vs logistic regression
+
+- linear r predicted values will be contionuous
+- stright line can be formd
+
+- logistic regression values will be between 0 and 1
+- can not form straigh line, s shape curve will be formed
+
+
+
+### gradient Discent Algorithm ###
+
+- optimization alogrithm
+- measure relationship between input and output - it should be strong relationship - for that loss func value should be minimum
+- GD will allow us to move from higher loss value to lower loss value - core idea
+- gradient - small change in 
+- gradient of loss function will be taken and updates the parameters so loss will be minimize
+- function => 
+	W(new) = W(initial)-(learning_rate)*grad_w
+	Wn = Wi-(η(δL/δWi)-gradient descent)
+
+	η = learning rate = step size
+
+- we will use log loss function and implement gradient descent algorithem and move towards the right values of parameters
+
+Practical for logistic regression
+
+- get banking data
+- analyse
+- create one hot encoding of data to convert string to float values
+- now apply resampling technique as data are unbalance - over sampling SMOTE
+- because of one hot encoding so many columns will be in data set so remove as much as column
+- by use of Recursive Feature Elemination technique
+
+
+@@@ Evaluation Metrics - for classification(logistic regression problem) @@@
+
+Confusion Metrics = TP, FP, FN, TN
+Accuracy => No of Correct prediction / Total no of prediction = (TP + TN) / (TP+TN+FP+FN)
+Precision => TP / (TP+FP)
+REcall = TP / (TP+FN)
+
+F1 Score =>  harmonic mean of Precision and Recall
+	 => 2 * (Precision*Recall)/(Precision+Recall)
+
+ROC AUC Score - based on probaility Score - means always calculate probability score
+# ROC 	=> Reciever Operator Characteristic Curve
+	=> Probability Curve - GRAPH for =>  TPR(recall) vs FPR(FP/(FP+TN))
+	=> at diff threshold value curve will be plotted
+	=> to form the curve we have to implement logistic regression(classification) many time with diff threshold value
+	=> instead of the we can consider AUC curve algorithm to get those all values 
+
+# AUC   => Area Under the ROC Curve => higher means better model performance
+	=> aggregate measure of performance of all possible threshold
+	=> model which have 100% wrong prediction will have AUC = 0, 100% correct will have AUC = 1
+
+
+@@@ Decision Tree Algorithem @@@	
+	
+	
+core idea => ask many question to data set and based on answer of those question split dataset into sub-parts
+	  => falls under supervised learning technique
+	  => can apply on regression and classification model
+	  => No underlyning assumptions are there for distibution of data so model will be constructed based on observed data
+
+contains	=> Nodes : test for value of certain attribute
+		=> Edges/Branch : connect to next node or leaf based on outcome of test
+		=> Leaf Node : termination - predicted outcome
+
+Two types
+1. Classification DT = for predictin binary value 0/1
+2. Regression DT = for predicting continuos value like salary based on many factors
+
+- start with training data on root node
+- decide from measure of impurity(Gini Impurity index or Entropy), find variable which minimize impurity
+- repeat checking impurity and finiding var for each subset of data until all features are checked
+- generate business rule for leaf
+
+Many algos for DT
+
+main aspects
+- Less Entropy and maximum information gain
+
+Entropy => measure of randomness in dataset
+	=> higher means harder to draw any conclusion from that particular information
+
+Information Gain => calculate entropy at root node and overall (childs node) and get the difference
+		 => so we an identify how well the attribute seperate training examples for target classification
+		 => entropy of parent - entropy of childrean
+
+Gini Impurity Index => cost function to evaluate splits in data set
+		    => 1 - sum(Pi)^2
+		    => sum of squared probability of each class
+		    => Favour the larger partition
+		    => easy to implement
+		    => for informatio  gain - it favours smaller partition with distinct value
+Chi Square and Reduction in variance technique - which helps us to fit training data set
+
+for practical implementation all parameter should be on same scale so do standarsclaing on data before applying DT algo
+check overfitting by checking prediction for train set as well. if prediction are high model is overfit
+
+@@@ OverFit UnderFit @@@
+-lead to poor performanceof model
+
+#Overfitting 
+- model learn from data with quite precision(details) and with noice too
+- model is too complex
+- high variance, low bais
+- data are not clean
+
+To handle overfitting issue : 
+
+K-fol Cross validation
+Regularization
+more data
+Ensemble model - use more models learning data patterns
+		
+
+#Underfitting
+- model has high bais and low variance
+- model is too simple
+- data are not clean or having noice
+- model did not learn from features well - may be less features
+
+To handle Underfitting issue:
+
+Increase no of features
+increase model's complexity
+increase duration of training
+
+#for better fit model
+look at the model performance over the period of time over training data
+model takes too long to train it will learn noice from data too -lead to overfit or 
+for short period it will not learn data properly lead to underfit
+over period of time error on trainnig and testing data will be reduced 
+but for too long training it will start increament in error as it learns details and noice from data, at that point stop training.
+
+
+@@@ Cross Validation@@@
+K-fold-cross validation = rotation estimation = out of sample testing
+For evalute machine learning model
+Overfitting negatively effect on performance of model
+ 
+
+Techniques for cross validation
+1. K-fold cross validation
+2. Hold out
+3. leave-one out
+4. leave p out
+
+K-fold => dataset split into K no of fold, k=integer
+-in given validation process each fold will work as test data at some point.
+-if K=5, say 1,2,3,4,5 <= folds =>>>>> k-1 part for training, 1 part is for testing
+- 1 fold = test data and 2,3,4,5 <= training data
+- 2 fold = test data and 1,3,4,5 <= training data
+- 3 fold = test data and 2,4,1,5 <= training data
+- 4 fold = test data and 2,3,1,5 <= training data
+- 5 fold = test data and 2,3,4,1 <= training data
+
+During hyper parameter tunning K-Fold cross validation technique will apply to evaluate model
+
+
+@@@ Hyper Parameter @@@
+
+
+# Parameters
+example : LR algo
+y = a + bx
+here a,b are parameters, which are used to find patterns between data
+to find best values of parameters loss function will be used like squared error loss
+
+# HyperParameters
+they are associated with given algorithem
+cannnot be learned from given dataset
+they are used to calculate model Parameters, if HP changed the model Parameter will be changed
+finding best value of HP is must to find the relationship between x and y in efficient way so algorithm can learn better for given dataset.
+called as HP tunning, where loss function will be minimized and optimal solution for dataset with given algo for given setting
+
+HP tunnig techniques
+1. Manual 
+2. GridSearchCV
+3. Random search CV
+
+1. Manual : based on past exp with algo we can decide manually HP values
+2. GridSearch CV : 
+ try every possible combintion of HP values and algo will evaluate model and give best set of HP
+ very slow
+ brute search approach
+3. RandomSearch CV : randomaly select set of parameters and algo will evaluate model and give best set from selected random HP set.
+
+
+@@ Knearest Neighbour Algorithm - KNN @@ 
+
+work based on distance of data points with each other
+
+used for
+- imputing the missing values
+- resampling the given dataset
+
+K=integer (no of nearest datapoint to predict - to perform classification)
+
+when
+= no parameters are there to learn from  - so called lazy learning
+
+for regression problem
+- take the average of all data points and use it to find out new data points - which are near by
+
+
+@@ SVM - Support Vector Machine @@ 
+
+Supervised Machine Learning Algorithm - most powerful
+- can work on small dataset, or huge dataset
+- can work for classification or regression
+- best with classification
+- faster than other algo as based on statics
+
+what is it
+- find the hyperplane which will seperate two classes best - efficeint way
+
+diff logistic and SVM
+
+logistic is based on probability
+SVM is based on statics
+
+SVM has two type
+
+Linear SVM : seperate two classes with straight line - linear in nature 2d or 3d
+Non-Linear SVM : can not seperate with straight line - kernel will be used here to classify data points here. For non-linear svm
+
+Support Vector
+- data points which are closest to the hyper plane
+- used to form hyperplane
+
+Margin
+- distance between support vector and hyperplane
+- hard and soft margin
+
+Linear SVM
+
+best hyperplane is having maximum margin froj support vector(nearest datapoints)
+
+Hard Classifier : we will not allow any data point in margin region
+Soft Classifier : we will allow data points in margin region
+
+
+Non Linear SVM
+
+transform the data with kernel equation or variou polynomial kernel
+types of kernel
+1. polynomial kernel
+2. sigmoid kernel
+3. Gaussian RBF Kernel
+4. Bessel Function Kernel
+5. Anova Kernel
+
+
+@@@ Enssemble Method @@@
+
+Based on wisdom of crowd
+Ensemble = group of predictors
+
+Say like multiple Decision tree models will be used to do learing of same data 
+and result from each DT will be considered and 
+to get final output aggregate those result
+
+this method called as Random Forest Classifier
+
+Types of Ensemble 
+
+1. voting classifier
+2. Bagging Classifier
+3. Random Forest Classifier
+4. Boosting
+
+Voting Classifier
+- most no of vote will be winner for output
+- even most weak classifiers will be there in ansemble technique final output will be pretty good
+- Hard Voting and Soft voting type
+
+
+## Bagging Classifier : Ensemble learning technique
+
+Bagging is made by two techniques 
+1. Bootstrap: statical tech, sample selection with replacement, select samples from dataset and train the models for those dataset
+2. Aggregation : aggregation in form of mean or count from all model classification prediction result
+
+
+main data set : 100 rows, 80 columns(features)
+Bootstrap : 5 models each having 30 columns(features) and 100 rows, train them with same algo family and get result
+aggregate : aggregate result of all model to get final result
+
+Note : if you use DecisionTreeClassifier for Bagging technique than it is called Random Forest Classifier
+RandomForest will also provide feature_importances_ attribute to get feature importance in classifier
+
+
+## Boosting Classifier - same algo family will be used
+
+Ada Boost technique
+=> Train model with given dataset & get result, find datapoints which are wrongly predicted
+=> Pass those datapoint as sample data to next model for training
+=> and so on 
+=> adjust the weight and increase the weight for instance(row or data points) which are wrongly predicted
+=> it is sequential manner learning
+=> weightage is criteria
+=> wrongly predicted datapoint will have more weightage and those data points will be considered for next training
+
+GradientBoost
+=> refer the value of loss and perform fit on loss value
+=> train multiple model in sequence
+=> residual = actual value-predict value
+=> fit will be on residual, dcn_regressor.fit(X_train, residual) in sequential manner
+=> prediction will be sum(all model result)
+=> built upon previous model loss
+
+
+## XGBoost - very popular technique
+=> to find best split in dataset 
+=> we need to pass data into DMatrix fuction for train, test seperatly
+=> set algo params
+=> advantages:
+	performance metric
+	speed boost
+	ability to find tune for parameters in effiecnt way
+
+
+## Kmeans Clustering - unsupervised technique
+based on property data point will be fall into particular cluster
+
+for datapoints
+=> internal co-efficent should be related
+=> external seperation - must be seperated-features from other cluster
+
+=> distance metric will be used to find similarity between datapoints 
+distance metric = Eucledian Distance Metric
+
+Types of clustering
+1. Exclusive Clustering = k-means clustering - only one cluster belonging for data point
+2. overlapping Clustering = fuzzy/c-means clustering - datapoint can belong to multiple cluster
+3. Hierarchial Clustering - parent-child relationship in cluster
+
+kmeans clustering
+- select k no of cluster
+- select datapoint
+- create clusters
+- compute centroid(means) of cluster by using data points(repitative process until get good center point)
+- check quality of cluster
+- deciding k value is our responsibility
+
+Inertia/SSE(sum of squared error) - to get value of k
+- internal co-hesion
+- calculate distance between datapoint and centroid and make square of it.
+- sum of all distance will be SSE
+- create plot y = intertia, x=k 
+- if got elbow like structure we can decide value of k
+- if inertia increase k will increase
+
+Silhouette Score- extrnal seperation
+- higher value is better for extranal seperation
+
+inertia and silhouette score are used to create Clusters for kmeans and business case
+
+
+##Hierarchial Clustering
+
+Dentrogram
+tree diagram used to illustrate arrangement of cluster produced by hierarchical clustering technique
+
+type 
+1. Agglomerative Clustering - start from bottom level - put all datapoint in diff cluster and then combine based on features (aggregate in to one cluster)
+2. Division Clustering - start from root level - put all datapoint in one cluster and then split
+
+
+Find Similarity between clusters - distance metrics to find distance between clauster
+1. Complete Linkage Clustering - maximum distance between two cluster
+2. Single Linkage Clustering - minimum distance between two cluster
+3. Mean Linkage Clustering' - mean of pairwise distance between two cluster
+4. Centroid Linkage Clustering - distance between centroid of two cluster
+
+
+## DBScan Clustering Density based Spatial Clustering of Application with noise
+- not sensitive to outlier - we can find outlier where cluster is -1 <= not fall in any cluster
+- no required to specify no of cluster at initial
+
+based on Density of data points can fall into cluster
+
+kmeans required spirical nature for datapoints to fall in cluster
+dbscan not required spirical nature for data point position - just check density of data point in space to form cluster
+
+two attributes
+1. Epsilon - neighbour hood around datapoints - if distance b/w two datapoints are less than epsilon than they are neighbour
+- to find better value of epsilon choose k-distance graph
+- if ep is large all datapoint will merge in one cluster
+- if small outlier will be high
+2. Min Points - min data point in  of given epsilon radious value
+min points can be derived from dimension(no of features) of dataset greater or equal => D+1 => D = no of features = no of columns
+ 
+
+
+@@@ Time Series Analysis @@@
+
+- independent variable is time 
+- y need to find based on time 
+
+some components of time series
+
+1. Trend : movement of value from intial point to final point like increase, decrease or horizontal trend
+2. Seasonality : at particular time period data point goes up/down for sure period of time - like example: june month
+3. Cyclical : data points go up or down but no sure about particular time period
+4. Irregularity : non-repetive fluctuation in data 
+
+Limitation:
+1. linear relationship between time and target data
+2. data transformation are mandatory
+3. model mostly work on uni-variate data
+
+Stationary Data: 
+- static data, no trend, seasonality, cyclicality or irregularity in data point
+- mean value is constant
+- variance is constant
+
+Non-Stationary Data:
+- mean-variance or co-variance is not constant
+- means it is changing with respect to time
+
+Two tests are there to check data are stationary or non-stationary time series data or not
+
+1. Augmented Dickey-fuller test - unit root test 
+- if adfuller (df['passengers'])[1] > 0.05 <=  non-stationary data, null hypothesis = p value
+
+# above value is > 0.05 <=  Null Hypothesis
+# non-stationary data
+# convert non-stationary data to stationary data by taking 1st or 2nd order difference
+
+print(f"First order diff {adfuller(df['Passengers'].diff().dropna())[1]}")
+print(f"Second order diff {adfuller(df['Passengers'].diff().diff().dropna())[1]}")
+
+2. Kwiatkowski-Phillips-Schmidt-Shin test
+
+To convert non-stationary time series data => stationary time series data
+
+1. Detrending
+2. Differencing
+3. Transformation
+
+
+# ARIMA Model
+- Auto Regression Integrated Moving Average Model 
+- auto regression - one value in time series data should be expressed as  linear regression equation
+- moving average  =  error terms = Q
+- integrated = d = level of Difference to convert non-stationary data to stationary data
+
+
+import pmdarima as pm
+pm.auto_arima(df['Passengers'],trace=True)
+
+Best model:  ARIMA(4,1,3)(0,0,0)[0] 
+
+p = 4, d = 1, q = 3
+
+ts = df['Passengers']
+
+import statsmodels.api as sm
+model = sm.tsa.arima.ARIMA(ts, order=(4,1,3))
+result = model.fit()
+
+# forcast for next day
+result.forecast() => 144    467.573771
+
+# forcast for next 10 days
+result.predict(144,155)
+
+
+
+@@@ Amazon Personalize @@@
+
+- Machine Learning approch or service for recommandation system for user's project
+- Real time personalization and recommandation service
+- same technology used at amazon.com = product recommandation
+
+use case
+personalize recommandation, personalize search and personalize notification
+
+
+@@@ Deep Learning @@@ 
+
+- subset of ML
+- inspired by function and structure of human brain
+- this algorithm is call as artificial neural network
+
+#Artificial Intellegence System
+
+- study by which computer can do thing which human can do
+- analyse data and take action
+
+	# machine Learning
+	- subset of AI
+	- parse(anlyse) the data, learn from data(by using statistical models)
+	- apply those learning to make a informed decision
+	- produce the prediction
+
+		# Deep Learning
+		- subset of ML
+		- process inspired by human brain to process information to find patterns in it
+		- also product prediction only not action
+
+
+#synapses = activation function
+which will decide weither information will be passed to next neuron(cell means that neuraon make active or not) or not
+hidden layer => process all information
+- sigmoid function = output will be between 0 to 1
+- hyperbolic tangent function = output will be between -1 to 1
+
+
+#### TensorFlow ####
+
+Basics of TF
+
+- opensource library from google, state of art model build & deploy 
+- tensorflow has keras api 
+- this api is used to build and train model 
+- to create layers in TF model use Sequental class
+- model = tf.keras.Sequential() <= sequential model
+- add layer => model.add(tf.keras.layers.Dense(3, input_shape=(784,))
+  single layer with 3 neuron and can take input of shape = (784,)one dimentional
+  Dense layer = every neuron from layer connected to neuron to another(next) layer 
+- in each layer we can specify activation function => model.add(tf.keras.layers.Dense(3, input_shape=(784,), activation='sigmoid')
+  1. Sigmoid
+  2. Softmax
+  3. Tanh
+  4. Relu
+  we can create by using subclass of tf.keras.activation to create activation function
+- compile model by model.compile() method
+  specify optimizer and metrics for compilation
+  attribute of compile function: 
+  1. Model optimizer(learning algorithm) : how model parameter will be updated decided by Optimizer
+  2. Loss function : value the model has to tune while performing training
+  3. Metrics(evaluation) : how to evaluate model at training step
+
+  1. Model Optimizer(learning algorithm):
+  - LA/search technique to update weights and bias for model to train
+  - 1. SGD : stochastic gradient descend
+    2. RMSprop
+    3. Adam : Adaptive moment estimation
+
+  2. Loss Function:
+  - objective function
+  - the value which is being considered to update weights and bias for neurons during training
+  - commom func
+   1. mse - mean square error
+   2. binary_crossentropy - for binary logerithmic loss(logloss)
+   3. cateogrical_crossentropy - multi class logerithmic loss(logloss)
+
+  3. metrics = ['accuracy']
+
+- to train model => model.fit()
+  1. x,y = training input and target data
+  2. epochs = no of(one full cycle through training dataset. A cycle composed of many iteration )
+     One Epoch is when an ENTIRE dataset is passed forward and backward through the neural network only ONCE in one epoch.
+     multiple epochs are used to pass to NN network and every time update weight to minimize loss
+  3. batch_size = no of training samples(row) used in single batch
+     whole dataset will be devided into multiple batches
+     (Iteration : no of batches requried to complete one epoch)
+  4. validation_data : validation data sent as tuple along with training data
+
+   no of data row = batch_size
+   data row  (in) batch (in) iteration (in) epoch
+
+   We can divide the dataset of 2000 examples into batches of 500 then it will take 4 iterations to complete 1 epoch.
+   dataset row = 100, 5=batch_size, 20 = iteration for each epoch.... so if 3 epochs then no of iteration = 60
+
+For NN network practical choose image data
+first do minmax scaler on image data
+
+Tensorflow
+=> define sequential model
+=> add input layer
+=> add flatten for image data
+=> add dense layer 2-3 no
+=> compile the model
+=> fit the model
+
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import Dense,InputLayer, Flatten
+
+model = Sequential()
+model.add(InputLayer(input_shape=[28,28]))
+model.add(Flatten())
+model.add(Dense(100,activation='relu'))
+model.add(Dense(75, activation='relu'))
+model.add(Dense(10, activation='softmax'))
+
+model.summary()
+
+model.compile(loss="sparse_categorical_crossentropy",  metrics=['accuracy'])
+history = model.fit(X_train, y_train, epochs=30, validation_data=(X_val, y_val))
+
+
+#intuition behind neural network
+
+@ for each hidden layer
+  take input variables and make
+   - (dot product of input variable and weight) + bais
+   - pass to the neuron 
+   - for each cycle of epoch parameters value will be changed like - weight and bais to predict loss as output by using activation function        
+   - for each epoch based on loss value and learning rate by using gradient descent method params will be updated to minimize loss
+   - finding the output of called as forward pass - y^ & loss
+   - updating parameters is called as backward pass - updating params
+   - single neural network is called perceptron
+   - sufficient no of neuron are required to learn complex pattern in NN
+   - if value of LR is very large -> model will misout the important pattern in data
+   - if value of LR is very small -> model will take much time to learn pattern in data
+   - so LR should be appropriate
+   - activation function will helps to draw seperation line in datapoints (for classification perspective)
+   - choose seperation line based on dataset and business problem to solve
+
+# Activation Function
+- weighted sum of input transformed from input to output from some node, that way is activation function - transform the data
+- tanh, relu, softmax, sigmoid, selu, leaky relu, swiss, parameterized relu
+
+# Sigmoid : 
+- sigmoid(x) = 1 / (1+exp(-x))
+- always returns value between 0 and 1
+- if input is small < 0 => close to 0,
+- if input is large > 0 => close to 1
+- s shape curve
+
+# Tanh hyperbolic tangent
+- s shape curve
+- return value between -1 to +1
+- earlier days mostly used not now, because of computation complexity
+
+#Relu - Rectify linear unit
+- if  value is < 0 => convert it to 0
+- if  value is > 0 => value will be same
+- f(x)=max(0 , x)
+
+# Leaky Relu
+- if  value=x is < 0 => 0.01 * x
+- if  value=y is > 0 => value will be same
+- f(x)=max(0.01*x , y)
+
+#Elu - Explonential Linear Unit
+- The ELU returns the number itself if it's positive, 
+- if negative -> alpha * (exponentiated(input) - 1). 
+- alpha will ontrol the value
+- The ELU has the potential of getting better accuracy than the ReLU
+
+# Selu -Scaled Explonential Linear Unit
+- if x > 0 => scale * x
+- if x < 0  => scale * alpha * (exp(x)-1)
+- apha and scale are constant
+
+# Swish
+- x * sigmoid(x)
+
+# softmax
+- used in multiclass classification problem
+- convert vector of value to probability distribution
+
+$$$$$ Relu is most widely used activation function
+
+## Optimizer
+
+convergence = moving towards uniformity
+1. SGD = Stochastic Gradient Descent => lowest speed, good convergence
+2. Momentum SGD => Medium speed, good convergence
+3. adagrad => very high speed, convergence quality low
+4. RMSProp => high speed, med->high convergence quality
+5. Adam => high speed, med->high convergence quality
+
+$$$ high speed in large data so adam is most widely used
+
+Common Aspects
+	
+          Input Neurons	  Hidden Layer	  N/hidden L	 o/p N	    Hidden L Activation	  o/p l Activation	Loss Function
+
+
+Binary	  one/input	  Depend on       Depend on        1        ReLU, Sigmoid          Logistic              Binary  
+class	  feature         problem         problem                   (Typi : ReLU)          (Sigmoid)             CrossEntropy
+classi-                  (typi: 1 to 5)   (Typi:10-100)
+-------------------------------------------------------------------------------------------------------------------------------
+
+Multi	  one/input	  Depend on       Depend on        1        ReLU, Sigmoid          Softmax               Categorical  
+class	  feature         problem         problem         per       (Typi : ReLU)                                CrossEntropy
+classi-                  (typi: 1 to 5)   (Typi:10-100)   label
+-------------------------------------------------------------------------------------------------------------------------------
+
+Re	  one/input	  Depend on       Depend on        1        ReLU                   None or ReLU(pos o/p)      MSE or  
+gre	  feature         problem         problem                                          or Logistic or             MAE
+ssion                    (typi: 1 to 5)   (Typi:10-100)                                    tanh(bounded o/p)
+-------------------------------------------------------------------------------------------------------------------------------
+
+
+
+## Hyper Parameters
+- The variables of algorithm which need to set before applying dataset to learn for algorithm
+
+1. Optimizer Hyper Parameters : the technique which is used to update weight and bais for algorithm
+- learning rate
+  rate at which the updates of parameters will take place in model during training
+  if LR is low than optimal value model will take much time and more epoch to learn to pattern in data
+  if LR is high than optimal value than model will outlook to learn patterns in data so model will not reach to convergence
+- batch size = no of rows in batch from dataset
+  small batch size : include more noice while loss caculation, but can be used to prevent stopping training process at local machine
+  large batch size : gives computational boost but it will require more memory
+  always choose maximun size of batch which can fit in your memory device and perform optimal for NN network
+- no of epochs
+  in most we dont need to improve epochs value inplace of it we can apply early stopping on training
+  Early Stopping : technique by which we monitor and stop training process when performance is not improving on validation dataset
+
+model.compile(
+optimizer = tf.keras.optimizer.SGD(learning_rate=0.01),
+loss='mse',
+metrics=['accuracy']
+)
+
+2. Model Specific Hyper Parameters - like sequential model
+- no of hidden layers
+- no of neurons in hidden layers
+  above both will not have any magic number but below methods can be used to get these values - and based on dataset complexity
+  1. Experimentation
+  2. Intuition
+  3. prefer to increase the depth
+  4. borrow the idea from research papers
+
+- activation function for hidden and output layers
+  % Sigmoid and its combination work well in classification problem
+  % Sigmoid and tanh is avoided because of vanish gradient problem
+  % ReLU is used so commonly, mostly used in hidden layer - start with ReLU and proceed to other based on o/p
+  % if dead neuron in NN than leaky ReLU 
+  
+
+Vanish and Exploding Gradients
+
+features(inputs) from input layer move towards each next layer,
+- linear transformation of features and sent to neuron and apply activation function and get o/p from each neuron
+- toward o/p layer same process happen and at last calculate loss from predicted value and real value
+- this gradient(loss) value back-propagate toward input layer and calculate error gradient on the way
+- computation of gradient of loss function for parameters' weight and bais terms will be complete, 
+- gradient decent steps will be taken to update weight and bais value  to minimize error loss.
+- two problem happen here
+1. Vanishing
+   in back-propagation reducing gradients will make gradients to 0 at some point
+   gradient is vanished here so no weight and bias value would be changed
+
+2. Exploding
+   in some case gradient value goes larger and larger as back propagation progress
+   very big updates happens in weight and bais
+   so gradient will diverge(infinitely increase) 
+
+# Solutions
+1. proper weight intialization like xavier, glorot(by research paper)
+2. usage of non-saturating activation function like ReLU & its alternative
+3. Batch Normalization - normalization of data
+4. Gradient Clipping - set lower and upper value of GD so if it is going increase or decrease clipping value will be considered for updating parameters.
+
+@@@ Computer Vision @@@
+- give the ability to computer to see the outside world by using hardware, software and analytical(to analyse) ability 
+- Hardware : camera to capture outside world
+- Software : video/image processing s/w to process and conver to digital format
+- Analytical : CNN network to process those format and analyse
+
+$$$$ Convolution $$$$
+
+Image Processing  Perspective
+- manipulating the value of pixel of image
+Mathematical
+- f, g - operation on two function applied and produce third function express how shape of one modified by other
+
+padding: to retain the shape of result image same as original
+stride : no of step size the kernel move over top of the image
+
+Convolution
+- take kernel and place it on top of image data
+- slide kernel left->right & top->bottom & get transformed pixel intencities of image data
+- which has better representation of image or important part of image than original one
+
+Pooling Layer
+- to summarize the image data and reduce the dimension of image
+- type : Maximum, Average : take maximum or average value of image region to reduce dimension
+
+Structure of CNN
+
+- i/p layer
+- CNN layers
+- Pooling layer/s
+- flatten layer
+- dense layer
+- o/p layer(dense layer)
+
+
+Transfer Learning
+- learned parameter from training of one task 
+- can be used on the another similar task
+- called TL
+
+Usage of TL
+- Train model to re-use
+- use pre-train model 
+- to extract features
+
+how to Use Pre-train model
+
+1. feature extraction part(some layers will be switched off)
+2. classification or regression part (to use pretrain model we will replace this part by our)
+
+fine tunning of new data
+=> pass the input data to pre-trained model
+=> perform only forward pass
+=> that o/p from forward pass will be used in final layer of NN (defined by us)
+
+
+## challenges of NN
+
+- features in numerical formate
+- apply features on model
+- to find pattern between feature and output
+
+
+logistic Regression : data should be linearly seperable
+Decision Tree : high chance of overfit 
+Naive Byes : assumption that featrues are actually independet from each other
+KNN : Save entire dataset to find nearest neighbour, computation is slow
+Random Forest : bootsraping and aggregation 
+
+With help of deep learning we can increase complexity of model so we can learn pattern between i/p, o/p better
+
+Deep Lerarning Advantages :
+- learn complex pattern
+- clssify image
+- fit data into any domain
+- no feature engineering or selection is required
+
+# if you specify appropriate no of neuron in DLNN than model can learn any complex pattern in dataset
+
+Challenges of NLP for Deep Learning Neural Network(Feed Forward NN) 
+
+1. all features are independent - processed independenlty
+   not have relationship between each other - means for NN no relationship to remember between feature
+2. But in text data features can be related to eachother and that relationship need to remember by model to process
+   like - Dog is crossing the road, and it is so tired.
+   dog and it refer to each other <- relationship to remember
+
+
+@@@@ RNN @@@@
+
+Neural Network which is capable of remebering the remembering the relationship between features
+
+- process individual word in sequence manner
+- o/p of one word pass along with input to next word to process
+- this connection is called recurrent connection
+
+Types of RNN
+
+1. One to One architecture
+
+  - single input single output
+  - usage : next word or next character prediction
+
+2. One to Many Architecture
+   
+   - single input, multiple outpu
+   - usage :  image captioning
+
+3. Many to One Architecture
+
+   - many inputs, one outpus
+   - usage : sentiment analysis, classification
+
+4. Many to many Architecture
+
+   - many input, many output
+   - usage : machine translation, lang translation
+   - called as encoder-decoder architecture
+   - the final word processing output will have the all information of input that will be passed as input to decoder to get result
+
+
+#### Problems with the RNN ####
+
+1. vanish gradient problem - for big sentences as gradeint decent it start vanishing and params of intial layer will not updated
+2. exploding gradient problem - slope grows instead of decaying,  make large updates on layers of RNN n model can not converge
+
+solutions
+
+1.initialization of weight and bais properly
+2.Truncating backpropagation process
+3.use proper activation function
+4.gradient clipping
+5.LSTM - for vanish problem
+
+
+@@@ LSTM - long short term memory
+
+- model is able learn long term dependencies
+
+three gates are useful over here
+1. Forget Gate : remove the irrelevent information from layer which is not required to calculate output
+2. Input Gate : information present in current input state is calculated and added to long term memory
+3. Output Gate : getting output of data from my current state
+
+@@@ Attention Mechanism @@@
+
+- we will use RNN or LSTM network to create encoder-decoder architecture here
+
+in old fashion
+   output of encoder will be fixed lenth vector
+   passed to decoder as input to get first output(word)
+   same vector from encoder will passed every time to decoder to generate next subsequent words
+   so that o/p from encoder is called bottleneck
+
+with Attension mechanism
+   output of all hidden state(of encoder) will be passed to decoder to generate next word
+   so here all output from hidden state will have some attension based on interested word.
+   here decoder can access all hidden state output and pay attension as per need to create next word 
+   for decoding based on attension specified for those output
+   like this, model will be able to remember the data for long sequences by using this technique
+
+
+$$$ Transfer Learning is common for computer vision applicaion
+
+- we can use already trained model and use the body part from it
+- body part - contains all parameters and fetures (from specific domain) learned from pre-trained model
+- we will define the head part - which is the output layer(consisting denses layer/s) 
+- to connect pre-trained model and get outcome of learned parameters
+- in our head(output layer-dense) will have the neuron as per our requirement like 
+- either binary classification than 2 neurons
+- gives us the output according to output layer
+- it is faster 
+
+
+$$ Transfer Learning in NLP
+
+1. Pre-training / Language Modeling
+- On large corpus build/train the model - dummy task - predict next word
+- these data is unlabeled data
+
+2. Domain Adaptation
+- fit the domain data on model
+- can be medical, imdb or any
+
+3. Fine Tunning
+- add final layer(output layer) say classification layer according to task requirement
+
+with attension and transfer learning we had state of art performance in NLP task
+
+
+$$ Transformer Architecture
+
+this architecture has two parts 
+
+1. Encoder : map input to series of continuous reresentation of vectors
+- inputs - text tokens
+- embedding(vector) representation of individual word
+- pass all vector to process parallely, apply the positional encoding on it  - with help of sin and cosin fun
+- to identify position of word as it is in parallel manner - so all word process together - and GPU is used 
+- enter to encoder 
+  the multi-head attension layer is there
+  means each word have (query, vector and value(multiple)) based on attension needed to set for that particular word in context of  	                 relevent word in this pair
+  Add normalization on those data to learn in effective manner and simplification
+  send data to simple feed forward layer to process given data and apply normalization over it
+  generate the final output of encoder
+
+2. Decoder : recieve encoder's and decoder's output at previous time-stamp and generate output sequence
+
+- along with output of encoder some input for decoder will be sent to it to
+- that input for decoder has all applying on it like
+  embedding, positional encoding, masked - multi-head attesioning, normalization
+- both together passed to same architechture as encoder like
+  multi-head attension, normalization, feed-forward, normalization (better processing)
+- al last we will have linear layer with softmax activation function(probability based output generation)
+
+with this transformer's encoder/decoder architecture having positional encoding and multihead attension we can achieve greater performance
+so transformer is pre-trained model we can use and fine tune data(domain) over it and achieve great performance 
