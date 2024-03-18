@@ -482,7 +482,7 @@ GradientBoost
 => we need to pass data into DMatrix fuction for train, test seperatly
 => set algo params
 => advantages:
-	performance metric
+	performance
 	speed boost
 	ability to find tune for parameters in effiecnt way
 
