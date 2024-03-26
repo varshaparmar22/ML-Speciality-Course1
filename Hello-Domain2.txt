@@ -472,14 +472,20 @@ use cases
 => analyse data using Apache spark, MLlib, MxNet, Tensorflow
 => connect to sagemaker for model-training, analysis and reporting
 
+Amazon Kafka
+=> built real-time data pipeline application and real-time data streaming application
+=> data pipeline app -> for moving data from one system to another
+=> data streaming app -> consume the stream of data
 
 Apache Spark
 - fast data processing workload on large dataset
+- for optimizing batch processing
 - realtime data processing and insights
 - example : read live tweets and perform sentiment analysis on them
 
 Apache Flink
 - realtime streaming dataflow engine
+- for optimizing real-time processing
 - can be used for streaming and batch processing data processing
 
 Tensorflow
