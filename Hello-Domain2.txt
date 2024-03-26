@@ -483,6 +483,10 @@ Apache Spark
 - realtime data processing and insights
 - example : read live tweets and perform sentiment analysis on them
 
+Managed Apache Flink(Formerly Kinesis Data Analytics)
+=> opensource engine for processing stream and batched data
+=> to Build -  event driven app, data pipeline app and data analytics app
+
 Apache Flink
 - realtime streaming dataflow engine
 - for optimizing real-time processing
