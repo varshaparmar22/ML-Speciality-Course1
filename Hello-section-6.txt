@@ -1,0 +1,84 @@
+Date : 31-03-2024
+
+- save the model & standard scaler object(learning from data set)
+- can be used in future
+- joblib is library in which you can save model and standard scaler object, many other are there too
+- you can specify any extension of saved model and ss object as they are going to store in binary formate
+- so extension of saved file is not important.
+
+$$$$$$$$$$ use your model in flask application$$$$$$$$$$$$$$$
+
+= create a new flask application anywhere in any directory
+= check python --version 
+= if shows directory considering python
+= otherwise you have to install it in that directory(or point it - not explore right now)
+= create a app.py file with flask code
+= templates folder
+= create venv in your folder ->   python -m venv mldeployment-demo
+= activate venv -> mldeployment-demo\Scripts\activate
+	- if not activated then open windows powershell as administrator and run below command to allow execution locally on folder
+	- Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine
+	- you will see venv as in (mldeployment-demo) in cmd of vs code
+	- env is active now
+	- if current folder has any requirements.txt file all extension will be installed on the spot
+	- i got scikit version issue to run section 6 demo
+	- install scikit oldr versio by 
+	- pip install scikit-learn==1.2.2
+	- app is running now
+= flask --app app run <- command to run flask app, app is name of app.py file
+
+
+
+$$$$$$$$$$$$$ share our web application on web $$$$$$$$$$$$$$$$$$$$$$$$
+
+Streamlit
+
+- pure python 
+- create your DS application on streamlit and you can share it to interviewr
+- it is free
+
+
+
+
+$$$$$$$$$$$$$$$$$ for any folder - create venv $$$$$$$$$$$$$$$$$$$$$$$$$$
+
+= cd myproject
+= python -m venv .venv
+= .venv\Scripts\activate.bat
+
+Once activated, you will see your environment name in parentheses before your prompt. "(.venv)"
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+
+after creating venv unse below command to install   === streamlit  == total python based
+
+= pip install streamlit
+= streamlit hello / python -m streamlit hello
+
+for local dir with venv active
+
+= streamlit run app.py 
+= start app.py under streamlit
+
+import streamlit as st
+
+st.title(""), st.header(""), st.text(""), st.success(""), st.warning(""), st.info(""), st.error(""), st.checkbox(""), st.radio(""), st.selectbox(""), st.button(""), st.sidebar.header(""), st.sidebar.text("")
+
+methods to create whole page in python and run under streamlit
+
+
+$$$$$$$$$$$$$$ to deploy your stremlit application online$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4
+
+Github will help you
+= create public repository for project in github
+= upload your app's files all of it
+= sign in into streamlit authenticate if required by app from phone
+= select new app in streamlit and select link of your github repository of your app
+= deploy your app
+
+
+
+
+
+

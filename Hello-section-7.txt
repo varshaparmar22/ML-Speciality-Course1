@@ -1,0 +1,389 @@
+Date : 01/04/2024
+
+NLP Pipeline
+
+1. Data Collection/acquisition : Gather business relevent information and load in designed source
+2. Text Cleaning : Prepare raw text for NLP to understand - remove markup, tag, meta
+3. Pre-processing : lowercasing, tokenizing, sentence segmentation, stemming, lemmatization, POS tagging.
+4. Feature Engineering 
+	1. use domain knowledge to create features so ML algo can work with
+	2. data => numerical formate
+	3. word embedding, TF-IDF, count-vectorizer etc techniqiues to convert text data to numerical formate
+
+5. Modeling : apply ML algo to learn pattern in data
+6. Evluation : evaluation based on test data
+7. Deployment 
+8. Monitoring : follow complete pipeline if any issue 
+
+
+
+Data Acquisition
+
+1. Scrapy : python framework for large scale web scraping, get data and convert and store in required format
+
+Anaconda jupyter notebook
+
+=> install and open anaconda prompt
+
+=> create new env - conda create -n scrapy python=3.9
+
+# To activate this environment, use
+
+=>  $ conda activate scrapy
+
+=> install scrapy - pip install scrapy
+=> make project dir - mkdir scrapy
+=> to start project - scrapy startproject bookscraper
+   this will create scrapy folder structure in your project
+=> in spider create a class for scraper and crawl by below command
+=> refer folder - E:\AWS Certified Machine Learning Specialty 2024 - Hands On(V2)\extra-learning\section-7\scrapy\bookscraper
+
+
+@@ NLTK @@
+
+Pre-processing technique
+
+1. Tokenization
+2. stop word removal : 	is, the, a, an... etc
+3. lemmatization- convert into root form of word with use of pos and context of word
+4. part of speech tagging(POS) : based on text definition and context, marking up word to particular part of speech like NNS, VB, VBP, PRP
+5. Stemming - convert into root form of word
+6. NER (Named Entity Recognition) : first step towards information extraction - named entity  will be assigned pre-defined category like person, organization, location etc..
+7. Word Sense disambiguation : meaning of word is determine by context in which it is used
+example : bark - outer cover of tree
+	  bark - dog sound
+	Lesk Algorithm is classical algo to do this	   
+
+
+1. Tokenization : break the tex into smaller chunks
+
+Type : 
+	1. word_tokenize()
+	2. word_punctokenize()
+	3. sent_tokenize()
+
+Combination of tokens : to understand context of text
+	Bi-gram
+	tri-gram
+	ngram
+
+practicle:
+
+import nltk
+nltk.download('punkt')
+text = "Example text is going to come over here."
+
+$$ tokenization $$
+
+all_token = nltk.word_tokenize(text)
+list(nltk.bigram(all_token))
+list(nltk.trigram(all_token))
+
+from nltk.tokenize import RegexpTokenizer
+reg_tok_obj = RegexpTokenizer('some regular exporession goes here')
+all_token = reg_tok_obj.tokenize(sent)
+
+
+$$ POS $$
+
+nltk.download("averaged_perceptron_tagger")
+for token in all_token:
+	print(nltk.pos_tag([token]))
+
+
+$$ Stop word removal $$
+
+nltk.download('stopwords')
+from nltk.corpus import stopwords
+stopwords = stopwords.words('english')
+filter_data = [w for w in all_token if not w in stopwords]
+
+
+$$ Stemming  $$
+
+stemmers available in nltk library
+1. porter stemmer
+2. snowball stemmer
+3. lancaster stemmer
+4. regex stemmer
+
+from nltk.stem import PorterStemmer
+from nltk.stem import SnowballStemmer
+from nltk.stem import LancasterStemmer
+from nltk.stem import RegexpStemmer
+
+porter = PorterStemmer()
+snow = SnowballStemmer("english")
+lan = LancasterStemmer()
+regs = RegexpStemmer("ing|s$|ables$", min=4)
+
+word = generous
+print(porter.stem(word))
+
+
+
+$$ Lemmatization  $$
+
+nltk.download('wordnet')
+from nltk.stem import WordNetLemmatizer
+
+lemma = WordNetLemmatizer()	
+lemma.lemmatize(word)
+
+
+$$ Word Sense Diambiguation $$
+
+from nltk.wsd import lesk
+from nltk.tokenize impoort word_tokenize
+
+a1 = lesk(word_tokenize("What is current time ?"), "current")
+print(a1, a1.definition)
+a2 = lesk(word_tokenize("air current ?"), "current")
+print(a2, a2.definition)
+
+
+$$ Named Entity Recognistion $$
+
+nltk.download('maxent_ne_chunker')
+nltk.download('words')
+
+text = "GeeksforGeeks is a recognised platform for online learning in India"
+ 
+for chunk in nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(text))):
+	if chunk.hasattr(chunk, "label"):
+		print(chunk.label().join(c[0] for c in chunk))
+
+
+
+@@@@@@@@@@@@@@@@ spacy @@@@@@@@@@@@@@@@@@@@@@
+
+- open source library for advance NLP in python
+- its specifically for production use (nltk was for research purpose)
+- understand and process large amount of data
+
+Features :
+
+1.tokenization
+2. Part Of Speech Tagging
+3. Dependency Parsing :  assignnig sytatic dependency, describe relationship between token like subject or object
+4. lemmatization
+5. Sentence boundry detection :finding, segmenting individaul sentence
+6. NER
+7. Entity Linking : assign unique identifier to all textual entity
+8. Similarity : finding similarity between words, text, span, documents
+9. text classification : assign label to doc or part of doc
+10. Rule based matching : based on rule find sequence of tokens
+11. training: update and improve models' prediction
+12. Serialization : saving objects to file or byte string
+
+spacy have small, medium, large model to load and all above features will be available to you.
+
+!pip install spacy
+
+import spacy
+
+nlp = spacy.load('en_core_web_sm')
+
+text = """ Named Entity Recognition (NER) is a critical component of Natural Language Processing (NLP) that has gained significant attention and research interest in recent years. 
+"""
+
+doc = nlp(text) # default apply-  tokenize, tagger, parser, NER
+
+for token in doc:
+	print('{:15} | {:15} | {:15} | {:15} | {:15} | {:15} | {:15} | {:15}'.format(token.text, token.lemma_, token.pos_, token.tag_, token.dap_, token.shape_, token.is_alpha, token.is_stop))
+
+
+spacy.explain('nsubj')
+
+displacy -  is used to format the disaply of NER on text with spacy
+
+from spacy import displacy
+displacy.render(docs=nlp(text), style='ent', jupyter=True)
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+############## Feature Extraction Techniques #######################
+
+Vectorization
+- converting raw text into numerical representation 
+- can be called as feature extraction too
+
+techniques for vectorization
+
+1. one hot encoding
+
+- each word from given corpus converted into vector made up from only -  1 and 0
+- no two diff word will have same OHE form
+- color - red, red, green, yellow
+- OHE - red - (1,0,0), green - (0,1,0), yellow - (0,0,1)
+- size of OHE = vocab size
+- sparsity is problem
+- inefficient in storing, computing and learning from data
+- no sequence, word context captured
+- out of vocab problem is present
+
+2. Bag-of-word / count vectorizer
+
+- BOW decribe the occurance of word within the document
+- intuition 
+  bag will have some word in it
+  if your two document having same kind of words then they will be in same bag means they refer to same class, like harry poter is good movie, avenger is good movie. Both are present in same bag or say in same class they belongs
+- length of vector depends on size of vocab
+- pros : simple to understand and implement
+	document having same word having similar representation to eachother
+	fixed length encoding for any sentence
+- cons : 
+	sparsity
+	vocab increase bow size increase
+	can not capture context (relationship between words)
+        no sequence(order) or word context can captured
+
+scikit library having CountVectorizer
+sklearn.feature_extraction.text import CountVectorizer
+
+cv = CountVectorizer(binary=True)
+c_output = cv.fit_transform([doc1, doc2, doc3])
+
+- here actual text will be sent to fit_transform, no need to apply pre-processing on them
+- scikit do all that
+- binary - True for sentiment analysis
+- otherwise it will rise count of word if repeated found in it.
+
+@@@ CountVectorizer - also takes ngram_range=(1,3) # unigram, bigram, trigram representation of vector which increase no of features in dataset
+- called bag of ngrams
+- can capture context and order of words
+- n increase sparsity increase
+- OOV problem still there
+- doc having same n-gram representation can belongs to same class 
+
+
+
+3. tf-idf
+
+- quantify the importance of word in given document with respect to other words in given document.
+- term frequency / inverse document frequency
+
+t- word(term)
+d-document(sentence)
+N-no of documents in corpus
+corpus-many documents(paragraph)
+
+- term frequency
+	no of time word appear in given doc
+	tf(word, in document) = no of time word appear in doc / total word in doc
+- inverse document frequency
+	stopword are more in any doc
+	so count of them will be high, so get high importance
+	but we need to decrease their importance for that IDF work
+	idf(t) = N/df
+	it will be very low for stopwords as they are availabel in all docs
+	so relative weightage is low
+	but if large corpus is there then IDF will explode
+	so idf(t) = log(N/(df+1)) 
+	N = no of documents in corpus
+	df = no of documents with term t in it in corpus
+
+tf-idf score = multiplication of tf * idf
+
+s1 = man eats pizza
+s2 = dog eats pizza
+s3 = ant eats food
+
+for man term
+tf = 1/3
+idf = log2(3/(1+1))
+
+for eats term
+tf = 1/3
+idf = log2(3/(3+1))
+
+for pizza term
+tf = 1/3
+idf = log2(3/(2+1))
+
+score = tf * idf
+
+from sklearn.feature_extraction import TfidfVectorizer
+
+first_sent = "data science is an amazing career in the current world"
+second_sent = "Deep learning is subset of machine learning"
+
+vec = TfidfVectorizer()
+result = vec.fit_transform([first_sent, second_sent])
+result.toarray()
+pd.DataFrame(result.toarray(), columns=vec.get_feature_names_out())
+
+advantages :
+1. calculate similarity between two text by using cosine or eucliden distance
+2. use case : text classification, information retrieval
+
+Disadvantages:
+1. curse of high dimensionality
+2. can't capture raltionship between words
+3. sparsity
+4. OOV problem
+
+
+
+4. word embedding
+
+$$$$$$$$ IMPORTANT TO REMEMBER FOR NLP
+
+
+- converting word into numeric vector formate
+- in lower dimension space to represent word or text
+- word have simiar meaning will have similar vector representation(inter word semantics) like king will be similar to queen, prince, sultan, royal etc
+- library Flair, FastText, Spacy
+- word have fixed length vector
+
+word2vec model(for word-embedding)
+2 techniques
+	1. CBOW
+	2. Skipgram
+
+Language Modeling
+	probability distribution over word or word sequence(what will be the next word - will specify the context) PD will be get by softmax AF
+- to DO language modeling two techniques are used CBOW and skip-gram
+- its called word-embedding
+
+$$$$$$$$$$$$$$$$
+
+- word2vec model based oin research paper submitted by google
+- ton access  word2vec we  will use gensim package from python to access all vec and other features from this model
+- load model from google link
+
+$$$ SKip-gram
+
+- used to predict context words(multiple) for given word (specifically next word)
+- reverse of cbow
+- if two word have similar context(word) than they will have similar word vector based on given training like quick fox, brown fox. quick and brown can have similar word vector
+
+- we can use any data and train them on gensim model's word2vec
+- save the model
+- can predict probability of next word in context as well the similarity we can get to know too
+- here input will be OHE form of word and output will be numerical vector format
+
+$$$$ CBOW
+
+- used to predict context word for given word (specifically previous word)
+- reverse of skipgram
+- bOW vector will be input(multiple words - in to vector - bag of word) predict one word as output
+- use gensim with sg=0 so it will be cbow while training
+
+
+difference Skip-grram and CBOW
+
+- no of training sample generated by skip gram is more than generated in cbow
+- no of training sample depends on window size in SG but in CBOW only one word will be generated  per sample
+- SG takes longer to train, if larger window size it will take more
+- perform better when training dataset is small and rare words are there as it generate more training samples
+
+- CBOW is better in capturing syntatic relationship
+- CBOW is better in representing more frequent word
+
+
+
+
+
+
+

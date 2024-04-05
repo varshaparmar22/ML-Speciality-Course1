@@ -1,0 +1,160 @@
+Date : 02/04/2024
+
+Inferential Statistics
+
+- process of using the data and perform analysis so we can deduce(draw conclusion) properties of probability distribution
+
+Population = > whole dataset => characterstics => parameters(value from entie population)
+sample = > chosen datapoints => characterstics => statics(value from sample)
+
+IS types - use the confidence interval to test parameters of population
+1. Hypothesis Testing: null HT, alternate HT(types : z test, f test, t test, anova test, u test)
+2. Regression Analysis : linear, nominal, logistic ordinal regression
+
+-samples you choose should represent the entire population for IS
+-will use confidence interval to test parameters of population
+- we will generalize the statics of population by performing analysis on population sample data
+
+
+$$$$$$ Parameter Space $$$$$$$$
+set of value can be fall into Population Parameter
+
+
+$$$$$$ Sample Space $$$$$$$$
+set of samples drawn from population
+
+
+$$$$$$ Sampling Distribution $$$$$$$$
+distribution of statics for different (type of )sample(positive or negative)
+
+$$$$$$ Standard Error $$$$$$$$
+standard deviation of sampling distribution of statics called standard error
+
+$$$$$$ Estimation $$$$$$$$$$$$$$
+
+obtaining most likely value of population parameter using statics
+
+2 types:
+point estimation
+interval estimation
+
+to learn about population parameter from sample staics techniques are
+
+Estimation & Hypothesis Testing
+
+- the statics which is used to estimate value of population parameters is called point estimator(formula)
+- that most likely value estimated is called estimate(value)
+
+$$$$$$ Bias of Estimator $$$$$$$$$
+
+Difference between estimated parameter value(by estimator) and actual parameter value
+- if both value are same BOE = 0
+- if diff is there than estimator is calles bias
+
+
+$$$$$$ Point Estimation $$$$$$$$$
+
+point estimations are single value that estimated population paramters from statics
+like sample mean and sample proportion is point estimation for population means & proportion
+
+
+$$$$$$ Interval Estimation $$$$$$$$$
+
+- interval estimation defined by two numbers
+- within these two number range value of population parameter is lies
+
+so this define confidence level by upper value and lower value of interval estimation
+
+
+$$$$$$ Hypothesis Testing $$$$$$$$444
+
+- test the assumption and draw the conclusion about population from sample data
+- we have to set NHT and AHT to check those assumption
+
+
+
+$$$$$$$ Regression Aanlysis $$$$$$$$$ 
+
+- How one variable will changed with respect to the other variable
+-  Regression Analysis : linear, nominal, logistic ordinal regression
+
+$$$$$ Confidence Interval $$$$$$$$$$
+
+amount of uncertainity associated when sample estimate the population parameter
+
+3 parts 
+- confidence level
+-statics
+-margin of error
+
+
+$$$$$$ confidence level $$$$$$$$
+
+- probability part of confidence interval is CL
+- it  describe that sampling method produce confidence interval which specify no of percentage that probabilty of
+  true population parameter
+- Probability distribution is bell shaped curve
+- 95% CL means 95 interval have true population parameters lies init
+
+$$$$$ Margin of Error $$$$$$$$$$
+
+the range ofvalues above and below the sample statics is ME
+say ME =5%
+receive vote 40%
+confidence level = 95%
+
+so candidate will receive vote 35%-45% vote that  Newspaper saying with 95% confidence level
+
+construction of confidence interval
+
+1. identify sample's statics: statics to use for estimation of population parameter
+2. select the confidence level : describe uncertainity of sampling method
+3. find margin of error : critical value * standard deviation or critical value * standard error
+4. specify confidence level : sample statics and margin error
+
+
+
+
+$$$$$ Hypothesis Testing $$$$$$$$$$
+
+- Hypothesis is a claim or current belief. 
+- Null Hypothesis(Current Belief -  may not be exactly right all the time-  either accept or reject)
+
+Steps for HT
+
+1. Define NHT, AHT(rejection of NHT)
+2. find statistics to check NHT 
+3. find the criteria based on which NHT is accepted or rejected(significance value p)
+4. calculate the probability value (p) when NHT is true - genraly 5% is p value we consider for this 
+5. based on p value accept or reject NHT 
+
+
+$ 0.05
+
+P Value: percentage value 
+p-val > $ : fail to reject NHT(not a significant result)
+p-val <= $ : reject NHT(significant result)
+
+
+Critical Value
+beyond this value from 2 step statics we will reject NHT
+
+Test statics < c-val : fail to reject NHT
+Test statics >= c-val : reject NHT
+
+
+$$$$$$$$$$$ Z Test $$$$$$$$$$$
+
+- by z test we will compare statics of sample
+- specially mean of sample
+- actual mean and assumed mean
+- when sample size is larger than 30
+- variance is know
+- used to estimate relationship between actual mean and assumed mean
+
+
+
+
+
+
+
