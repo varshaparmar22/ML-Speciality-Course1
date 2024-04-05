@@ -1,0 +1,284 @@
+Date: 27-03-2024
+
+AWS Lambda
+- serverless
+- upload code and run it
+- charges based on running time period
+- infrastructure will be taken care by aws
+
+Tensorflow Lite
+- to generate the prediction
+for that
+- save the model
+- convert TF model in TF lite model
+- tf lite 50 mb
+- load saved model
+- keras provide tf lite converter functionality
+- create object of tf lite for given model
+- keras image preprocessor will help for image preprocessing(changing dimension of image)
+- install tf lite runtime to load our converted lite model
+- tflite interpreter is used to access input/output and get prediction from given tf lite model
+- to deploy in aws lambda we have to create lambda handler file
+- having lambda handler function in it, event and context as arguments.
+- this function will be invoke by aws
+
+DOCKER
+
+- containerizer and manager tool - Develop, Run and Ship anywhere
+- to deploy ml app, we need to package all the dependencies of app into one so our app can run
+- docker is isolated space where ml app can run by using resources
+
+docker consist the container
+- container is sanbox process on host machine which is isolated from all other process on host machine
+- it is one kind of isolated machine on host
+- we can start, stop, move, delete container by using Docker API or CLI
+- container image is isolated filesystem - specify all dependencies for container to run like configuration, scripts, dependencies, binaries, environment variables, commands to run etc
+- container is instance of image
+- we can pull docker image from docker hub
+- run the image will create the container and run your code in that container
+- interactive run on container can be done(in side container run all commands no need to specify run docker every time)
+- only once -> docker run -it busybox sh
+- you have to specify docker file to create container for docker image -  having all command 
+
+
+CloudWatch
+= monitor the resources and application
+= create alarm for many things like cpu usage is more than 30%, billing alarm
+= automation possible by using cloud watch - like if model taking much time to train
+= it will create log for most of service of aws
+= logs are in log group
+= you create event too based on rules(Amazon EventBridge service) - perform another action - automation by cloudwatch rule link
+
+
+
+@@@@@@@@@@@@@@@@@ SageMaker @@@@@@@@@@@@@@@@@@@@@@@@
+
+Protobuf : Protocol Buffers (Protobuf) is a free and open-source cross-platform data format used to serialize structured data.
+
+All models are available in sagemaker are prebuilt docker images
+
+from sagemaker import image_uris, model_uris, script_uris
+container = image_uris.retrieve('knn', boto3.Session().region_name, 'latest')
+
+retrive is function to get that docker image
+
+first create sagemaker session and call estimator
+sagemaker.estimator.Estimator : highlevel interface for segemaker training, handle end-to-end sagemaker training and deployment tasks
+
+model.deploy function to deploy given trained model- which will create end-point for model deployment
+endpoint - can be used to access in labmda function for automation, info about instance, setting for it, under inference tab in SGM
+EP is used to invoke new data - test new data
+
+
+SageMaker JumpStart : place where you can find pore-trained model for your ML projects start.
+1. foundation model : pre-trained model on large amount of data so you can create article summarization, text-video-image generation
+2. computer vision model : Pre-trained model takes image as input and give selected type of output like classification, object detection, semantic segmentation all related to images
+3. natural language processing : Same pre-trained model like text classification/summarization, machine translation, sentence pair classification, Named Entity Recongnition, Question-answering and text generation
+
+you can use this model finetune them for your project or just train by using your own data and use the trained feature or customize model as per requirment.
+
+
+
+$$$$$$$$$$$$$$$$$$ services $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+
+@@@@ Amazon Polly
+
+- turn text into lifelike speech using deep leaning
+- Amazon Polly is a Text-to-Speech (TTS) service that uses advanced deep learning technologies to synthesize speech that sounds like a human voice.
+
+@@@@ Amazon Transcribe
+
+- Automatic speech recognition
+- speech to text transcription
+
+AWS Healthscribe
+- HIPAA eligible service that generate preliminary clinical notes and transcripts based on patient-clinician conversation audio.
+
+@@@@ Amazon Lex
+
+- Amazon Lex is a service for building conversational interfaces into any application using voice and text, enabling you to add sophisticated, natural language chatbots to your applications.
+- To build voice and text chatbot
+intent - means what user's final intension to get from chatbot, means like booking a flight, change reservation, cancel flight, end conversation
+- we can select template for that or create our own
+- You must have Amazon Bedrock set up in order to use this feature. Please ensure you have requested access to Anthropic's V2 model.
+- Pricing for Lex is based upon these two interaction models; request and response interaction and continuous streaming conversation.
+
+@@@@ Retrain Pipelines - check blog - most recommanded
+
+- automatic model retraining and deployment using aws step function data science sdk for amazon sagemaker
+- step function -  o/p of one step will work as input to next step and handle whole retraining and deployment task based on performance condition set by rules like amazon eventbridge
+
+@@@@ Model Lineage in Machine Learning - (lineage - getting something from ancestors)
+
+Model lineage is a set of associatation between model and all other components which are involved into creation of that model like
+- dataset, hyperparameters of model, container image(set of requirements of model - python, TF, Pytorch etc)
+
+For Model lineage Sagemaker Provides many features
+
+1. SGM Studio - its a IDE provide framework for ML solution to create
+2. Sagemaker Feature store - to store, update,retrive and share features of ML models for training and inference for feature reuse speed time for model deployment 
+3. SGM lineage tracking - store info for all steps of data preparation to model deployment - you can reproduce workflow steps and track model and dataset.
+4. ASGM Pipelines - continuous integeration and continuous deployment service for SGM ML model. integrage code changes and test them and deploy application ALl Automatically - this pipeline infor store in json object. Pipline store metadata information of each step of ML workflow. Like data preprocessing, model training, data postprocessing, model evaluation, and so on. Till resources are available for all steps process is automatically configured and manage the model reproducibility
+5. ASGM Experiments -  organize, track, compare, evaluate ML models experiments and model versions. Experiments are made up from trials and trial componenents which have IDs, and metadata associated with model training, and other setting associated with model like hyperparameters, performance metrics, bais reports, data used, model explain reports and more.
+6. ASGM Projects -  AWS service catalog provides ML products which can be used by data scientist to create ML solutions by creating single template or multiple template for model creation, deployment inn ML workflow. you can track model template/s used in your ML workflow by versioning and reproduce it for any otehr ML solutions development
+7. ASGM Model Registry - model and model version will be stored in centralized repository, models stored in model package group. Group has several version of model package. Version can be marked approved or rejected.
+8. Amazon ECR - Elastic container registry, store, track, manage container image.Image Id is important to access and identify your conatainer to reuse. seperated Image container can be used for preprocessing, training, inference and afterward can be used by id whenever needed.
+9. Amazon s3 : Object store. to store model data for training and model artifact. with versioning facility, so latest version you can set to use for data or model
+10. AWS CodeCommit - Managed source control service, with the help of code commit id associated with all the code commited while model developement is in team collabaration. after successful training job code will be pushed to codecomit with id and developer can do futher experiment on code for better perfomance, if not achieved or achieved as per requirment while model deployment code will be rollback to particular model codecomit id and delopy it.
+
+@@@@ Aamazon Augmented AI 
+
+- comes under human review workflow service.
+- give the ability to put human in loop for ML prediction review. 
+- 2 step process 
+   1. create human review workflow : set condition to trigger human review workflow, like (set confidence threshold value or random sampling) 
+   2. start human loop - send data review task to human
+
+- workflow arn value is used in api call to start workflow and put human in loop.
+use case - content moderation, text extraction from document, review prediction from amazon recognition, amazon textract service or for your ML models
+
+
+@@@@ Amazon CodeGuru
+
+- inteligent system for recommandation for improving performance and code quality and efficiency for our java or python application
+- CodeGuru Profiler - create a profile and create a clear picture of app's performance
+- CodeGuru Reviewer -  validate the quality of code by matching with standard code repositort like github, aws codecommit, bitbucket...
+
+
+@@@@ Aamazon Comprehend 
+
+- Sevice for NLP and text analytics
+- use ML to find pattern, insight  and relationship are available in text data. 
+- extract entities, key phrases, sentiments, language, syntax, topic, number, document calssification from email, web page, document, social media post, medical record, phone transcripts
+- extract required things(insights) with high confidence score.
+- get better answer from text, topic identification of text, train by your own data like specufy patter of some text you want to extract from document, comprehend will do 
+
+Aamzon Comprehend Medical - comprehend service specifically medical domain, low cost and high accuracy usign deep lerning model. Gives you insight of medical text  unstructured data 
+
+
+@@@@ AWS Deep Composer
+
+- you can compose your own music with help of aws deepcomposer by ML techniques 
+- creative way to learn ML
+- available under free tier for 1 year
+
+@@@ AWS DeepLence
+
+- Deep Learning enabled video camera
+- Develop ML skill by using some computer vision hnadson practicle and documentation
+- face/object/activity detection and articstic transformation of image
+- its stopped in amazon now
+
+@@@@ Aws DeepRacer
+
+- fully automatic car racing 1/18 scale race car, driven by reinforcement learning, 3d racing simulator, global racing league
+- Create your own racing model by handsonn and documentation and train it and start online racing games competition.
+- compete in championship and win prize and trip
+
+
+@@@@ Amazon DevOps Guru
+
+- ML powered cloud operation service to improve app's availability
+- automatically detect operational issues -by co tinuouse checking matrics and app's normal behaviour
+- easily scale and maintain app's availability - analyse you apps no need to monitor it.
+- resolve issues with ML powered insights -give you the root cause of issue to resolve it quickly
+- reduce noice and alarm fatigue - surface critical alerts, no need to monitor multiple monitoring tool
+
+
+
+@@@@ Aamzon Forecast
+
+- easily build accurate forcasting models
+- Based on the same machine learning forecasting technology used by Amazon.com.
+- Use Historical (sales, web traffic, inventory no, cashflow) & Related(holidays, product description, promotion) Data for required forecasting by ML capability
+- Use cases: inventory, financial, resource planning
+
+
+@@@@ Amazon Fraud Detector
+
+- detect online payment fraud and creation of fake account faster way
+- detect/prevent online fraud
+- fraud detection in minutes
+- customize your own business need, upload your farud data and specify action to take if fraud 
+
+
+@@@@ Aamzon Healthlake
+
+- store, transform, query, analyse the healthdatain aws cloud at petabyte scale
+- useful for health insurance company, healthcare provider, pharmaceutical company
+- HIPPA eligible -can be audited
+
+
+@@@@ Aamzon Kendra
+
+- Enterprise search service , highly accurate
+- Natural language question can be answered by kendra
+- kendra can connect easily with s3, file system, website, dropbox, relational db, salesforce any kind of data to get accurate result
+- improve over time as ML model works here and learn.
+- searching is not keyword based as old but actual deep understanding of question by Deep learnnig model use and give better answer
+- access to internal knowledge, better customer and sales support service, easy for end customer to find information
+
+
+@@@@ Amazon lookout for metrics/vision/equipment
+
+- Lookout service for industry or manufacturing sector for monitor assest by using ML service.
+- for equipment - analyse sensor data and find out abnormal behaviour of equipment - so ou can take action before machine fail and avoid downtime. Your responsibility to send data to amazon for monitoring
+- for metrics - continuous analyse business data to identify anomalies 
+- for vision - find product defect using computer vision for quality inspection - automate and improve visial inspectio  of product defects.
+
+@@@@ Aamzon Monitron
+
+- End-to-end system perform equipment monitring 
+- automatically detect abnormal behaviour in industrial machiery 
+- you can take proactive action and reduce unplanned downtime
+- you have to install monitron sensor and gateways using monitron app
+- and start monitoring your equipment
+- transfer sensor data to aws(automatic) for analyse as per standard set
+- you can setup hardware (on each equipment) which receive abnormality and get alert on montiron app about that equipment
+- ML powered so improve by time by experience
+- encryption enabled on data in rest and transist
+
+
+@@@@ AWS Panorama
+
+- ML appliance and software development kit
+- that can be used by organization to bring computer vision capability to its on premise camera and make predication with high accuracy and low latency locally(where internet is not available prediction done locally and action taken based on that by human intraction)
+- anlyse video feed in miliseconds and make prediction locally.
+- add computer vision to your camera
+- realtime prediction
+- optimize store experience
+- improve restaurant operations - predict wait time, boost customer satisfaction, ensure order accuracy
+- recognize objects like label, barcode, parts, products, optimize freight operation
+
+
+
+@@@@ Aamzon Rekognition
+
+- visula analysis service for images and videos by deep learning
+- search , verify, organize millions of images and videos
+- facial rekognition
+- detect objects unique to your business
+- integration with other aws services easily
+- deep learnig technique so we can start anlysing video and images no need to train 
+- label detection inbuilt, celebrity rekognition, facial detection, face comparison between two images, text identification, whole video analysis 
+- metrics to monitor all info
+- image and video feed analysis
+
+
+
+@@@@@ Amazon Translate
+
+- Powerful nueral machine translation
+- can be availabel by api call
+- realtime and batch translation 
+- customization for translation
+- like send parallel data which contain source data and desired translatio for it in memory(some phrases n all)
+
+
+@@@@@ Amazon Textract
+
+- extract data from scanned document either handwritten or image doc. 
+- based on ML 
+- go beyond Optical character rekognition
+- identify fields in form, info stored in table formate etc.
